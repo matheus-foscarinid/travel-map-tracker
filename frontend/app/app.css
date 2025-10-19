@@ -21,12 +21,7 @@ body {
   width: 100%;
 }
 
-.custom-tooltip {
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 12px;
-  font-weight: 500;
+/* Hide Leaflet attribution */
+.leaflet-control-attribution {
+  display: none !important;
 }
