@@ -103,10 +103,7 @@ travel-map-tracker/
 ├── frontend/                   # Aplicação React Router v7 (Frontend)
 │   ├── app/                   # Código fonte da aplicação
 │   │   ├── components/       # Componentes reutilizáveis
-│   │   │   └── WorldMap.tsx  # Componente do mapa interativo
 │   │   ├── routes/           # Páginas da aplicação
-│   │   │   ├── home.tsx      # Página inicial com mapa
-│   │   │   └── config.tsx    # Página de configuração
 │   │   ├── app.css           # Estilos globais
 │   │   ├── root.tsx          # Componente raiz
 │   │   └── routes.ts         # Configuração de rotas
