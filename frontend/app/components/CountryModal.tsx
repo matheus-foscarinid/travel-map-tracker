@@ -107,3 +107,4 @@ export default function CountryModal({ isOpen, onClose, countryName, countryCode
     </div>
   );
 }
+

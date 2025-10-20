@@ -11,7 +11,8 @@
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
   pointer-events: none;
   white-space: nowrap;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) translateZ(0);
+  will-change: transform;
 }
 
 .country-text-small {
@@ -22,5 +23,17 @@
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
   pointer-events: none;
   white-space: nowrap;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) translateZ(0);
+  will-change: transform;
 }
+
+/* Optimize GeoJSON rendering */
+.leaflet-interactive {
+  will-change: fill, stroke;
+}
+
+/* Reduce repaints during dragging */
+.leaflet-dragging .leaflet-interactive {
+  pointer-events: none;
+}
+

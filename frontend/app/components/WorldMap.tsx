@@ -28,6 +28,28 @@ function MapContent({ onCountryClick, onCountrySelect }: { onCountryClick?: (cou
   const map = useMap();
   const [currentZoom, setCurrentZoom] = useState(2);
 
+  // * AI GENERATED FUNCTION
+  const getCountryStatus = (countryName: string) => {
+    const seed = countryName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const random = Math.sin(seed) * 10000;
+    const normalized = (random - Math.floor(random));
+
+    if (normalized < 0.3) return 'visited';
+    if (normalized < 0.5) return 'wishlist';
+    return 'default';
+  };
+
+  const getCountryStyle = (status: string, isHover: boolean = false) => {
+    switch (status) {
+      case 'visited':
+        return isHover ? mapColors.visitedHover : mapColors.visited;
+      case 'wishlist':
+        return isHover ? mapColors.wishlistHover : mapColors.wishlist;
+      default:
+        return isHover ? mapColors.hover : mapColors.default;
+    }
+  };
+
   useEffect(() => {
     const handleZoomChange = () => {
       setCurrentZoom(map.getZoom());
@@ -45,25 +67,32 @@ function MapContent({ onCountryClick, onCountrySelect }: { onCountryClick?: (cou
       .then(response => response.json())
       .then(data => {
         const geoJsonLayer = L.geoJSON(data, {
-          style: mapColors.default,
+          style: (feature) => {
+            if (!feature || !feature.properties) return mapColors.default;
+            const countryName = getCountryName(feature.properties);
+            const status = getCountryStatus(countryName);
+            return getCountryStyle(status);
+          },
           onEachFeature: (feature, layer) => {
+            const countryName = getCountryName(feature.properties);
+            const status = getCountryStatus(countryName);
+
             layer.on({
               mouseover: (e) => {
                 const layer = e.target;
-                layer.setStyle(mapColors.hover);
+                layer.setStyle(getCountryStyle(status, true));
                 layer.bringToFront();
               },
               mouseout: (e) => {
                 const layer = e.target;
-                layer.setStyle(mapColors.default);
+                layer.setStyle(getCountryStyle(status, false));
               },
               click: (e) => {
                 if (onCountryClick) {
                   onCountryClick(feature as CountryData);
                 }
-                const countryName = getCountryName(feature.properties);
                 const countryCode = feature.properties.ISO_A2 || feature.properties.ADMIN;
-                console.log('Country clicked:', countryName);
+                console.log('Country clicked:', countryName, 'Status:', status);
 
                 onCountrySelect({
                   name: countryName,
@@ -72,7 +101,6 @@ function MapContent({ onCountryClick, onCountrySelect }: { onCountryClick?: (cou
               }
             });
 
-            const countryName = getCountryName(feature.properties);
             layer.unbindPopup();
 
             // there's a getBounds method :)
@@ -126,11 +154,11 @@ export default function WorldMap({ onCountryClick }: WorldMapProps) {
     <div className="w-full h-full">
       <MapContainer
         center={[20, 0]}
-        zoom={2}
+        zoom={3}
         minZoom={2}
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
-        style={{ height: '100%', width: '100%', backgroundColor: '#F3F4F6' }}
+        style={{ height: '100%', width: '100%', backgroundColor: mapColors.background.fillColor }}
         className="z-0"
       >
         <MapContent onCountryClick={onCountryClick} onCountrySelect={handleCountrySelect} />

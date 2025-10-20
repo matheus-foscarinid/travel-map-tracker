@@ -37,5 +37,12 @@
     "fillColor": "#D97706",
     "fillOpacity": 0.9,
     "weight": 2
+  },
+  "background": {
+    "fillColor": "#cce3ff",
+    "fillOpacity": 1,
+    "weight": 0,
+    "opacity": 1,
+    "dashArray": "0"
   }
 }
