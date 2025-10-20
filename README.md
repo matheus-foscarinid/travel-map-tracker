@@ -55,7 +55,7 @@ flask run
 
 O backend estará disponível em `http://localhost:5000`
 
-### 2. Configuração do Frontend (React Router v7)
+### 2. Configuração do Frontend
 
 ```bash
 # Navegue para o diretório do frontend
