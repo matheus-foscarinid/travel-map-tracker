@@ -1,26 +1,27 @@
 import { Link, useLocation } from 'react-router';
+import { Home, Settings, BarChart3 } from 'lucide-react';
 
 interface NavItem {
   name: string;
   href: string;
-  icon: string;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 const navigation: NavItem[] = [
   {
     name: 'Home',
     href: '/',
-    icon: '🏠'
+    icon: Home
   },
   {
     name: 'Settings',
     href: '/config',
-    icon: '⚙️'
+    icon: Settings
   },
   {
     name: 'Statistics',
     href: '/statistics',
-    icon: '📊'
+    icon: BarChart3
   }
 ];
 
@@ -30,11 +31,11 @@ export default function Navigation() {
 
   return (
     <nav className="bg-white shadow-lg border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-900 px-4 sm:px-6 lg:px-8">
                 Travel Map Tracker
               </h1>
             </div>
@@ -43,6 +44,7 @@ export default function Navigation() {
           <div className="flex space-x-2">
             {navigation.map((item) => {
               const isActive = currentPath === item.href;
+              const IconComponent = item.icon;
               return (
                 <Link
                   key={item.name}
@@ -53,7 +55,7 @@ export default function Navigation() {
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
-                  <span className="text-lg">{item.icon}</span>
+                  <IconComponent className="w-5 h-5" />
                   <span>{item.name}</span>
                 </Link>
               );
@@ -64,3 +66,4 @@ export default function Navigation() {
     </nav>
   );
 }
+
