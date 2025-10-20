@@ -15,14 +15,29 @@ export default function Home() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="p-4 border-b">
-          <h2 className="text-xl font-semibold text-gray-800">Interactive World Map</h2>
-          <p className="text-gray-600 mt-1">Click on any country to interact with it</p>
-        </div>
-        <div style={{ height: '600px' }}>
+    <div className="w-full mx-auto h-screen flex flex-col">
+      <div className="bg-white shadow-lg overflow-hidden flex-1 flex flex-col relative">
+        <div className="flex-1">
           <WorldMap onCountryClick={handleCountryClick} />
+        </div>
+
+        {/* Legend */}
+        <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 z-10">
+          <h3 className="text-sm font-semibold text-gray-800 mb-2">Legend</h3>
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: '#10B981' }}></div>
+              <span className="text-xs text-gray-600">Visited</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: '#F59E0B' }}></div>
+              <span className="text-xs text-gray-600">Wishlist</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded" style={{ backgroundColor: '#9CA3AF' }}></div>
+              <span className="text-xs text-gray-600">Not visited</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
