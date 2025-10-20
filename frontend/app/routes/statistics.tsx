@@ -10,19 +10,20 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Statistics() {
   const visitedCountries = [
-    { name: 'United States', flag: '🇺🇸', continent: 'North America' },
-    { name: 'Canada', flag: '🇨🇦', continent: 'North America' },
+    { name: 'Brasil', flag: '🇧🇷', continent: 'South America' },
     { name: 'France', flag: '🇫🇷', continent: 'Europe' },
     { name: 'Germany', flag: '🇩🇪', continent: 'Europe' },
-    { name: 'Japan', flag: '🇯🇵', continent: 'Asia' },
-    { name: 'Australia', flag: '🇦🇺', continent: 'Oceania' },
-    { name: 'Brazil', flag: '🇧🇷', continent: 'South America' },
-    { name: 'South Africa', flag: '🇿🇦', continent: 'Africa' }
+    { name: 'Portugal', flag: '🇵🇹', continent: 'Europe' },
+    { name: 'Spain', flag: '🇪🇸', continent: 'Europe' },
+    { name: 'Italy', flag: '🇮🇹', continent: 'Europe' },
+    { name: 'United Kingdom', flag: '🇬🇧', continent: 'Europe' },
+    { name: 'Argentina', flag: '🇦🇷', continent: 'South America' },
+    { name: 'Italy', flag: '🇮🇹', continent: 'Europe' },
+    { name: 'Paraguay', flag: '🇵🇾', continent: 'South America' },
+    { name: 'Uruguay', flag: '🇺🇾', continent: 'South America' },
   ];
 
   const wishlistCountries = [
-    { name: 'Italy', flag: '🇮🇹', continent: 'Europe' },
-    { name: 'Spain', flag: '🇪🇸', continent: 'Europe' },
     { name: 'Thailand', flag: '🇹🇭', continent: 'Asia' },
     { name: 'New Zealand', flag: '🇳🇿', continent: 'Oceania' }
   ];

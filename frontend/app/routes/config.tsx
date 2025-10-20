@@ -16,6 +16,7 @@ export default function Config() {
   const [showCountryLabels, setShowCountryLabels] = useState(true);
   const [defaultMapView, setDefaultMapView] = useState('world');
 
+  // TODO: add better themes
   const themes = [
     { id: 'light', name: 'Light', description: 'Clean and bright interface' },
     { id: 'dark', name: 'Dark', description: 'Easy on the eyes in low light' },
