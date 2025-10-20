@@ -102,8 +102,3 @@ travel-map-tracker/
 
 1. **Backend**: Execute `flask run` no diretório `backend/`
 2. **Frontend**: Execute `npm run dev` no diretório `frontend/`
-#### Frontend (React Router v7)
-O frontend não requer variáveis de ambiente específicas no momento, pois utiliza:
-- **Mapas**: OpenStreetMap tiles (gratuitos)
-- **API**: Configuração será adicionada quando o backend for integrado
-- **SSR**: Desabilitado para evitar conflitos com Leaflet
