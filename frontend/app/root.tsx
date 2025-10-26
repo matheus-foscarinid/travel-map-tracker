@@ -10,6 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import Navigation from "./components/Navigation";
+import { ThemeProvider } from "./hooks/useTheme";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -44,10 +45,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation />
-      <Outlet />
-    </div>
+    <ThemeProvider>
+      <div className="min-h-screen theme-bg">
+        <Navigation />
+        <Outlet />
+      </div>
+    </ThemeProvider>
   );
 }
 

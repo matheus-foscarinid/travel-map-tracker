@@ -4,6 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import mapColors from '../config/mapColors.json';
 import CountryModal from './CountryModal';
+import { useTheme } from '../hooks/useTheme';
 import './WorldMap.css';
 
 interface CountryData {
@@ -26,7 +27,11 @@ function getCountryName(properties: { name: string }): string {
 
 function MapContent({ onCountryClick, onCountrySelect }: { onCountryClick?: (country: CountryData) => void; onCountrySelect: (country: SelectedCountry) => void }) {
   const map = useMap();
+  const { currentTheme } = useTheme();
   const [currentZoom, setCurrentZoom] = useState(2);
+
+  const themeKey = currentTheme.id as keyof typeof mapColors;
+  const themeMapColors = mapColors[themeKey] || mapColors.light;
 
   // * AI GENERATED FUNCTION
   const getCountryStatus = (countryName: string) => {
@@ -42,11 +47,11 @@ function MapContent({ onCountryClick, onCountrySelect }: { onCountryClick?: (cou
   const getCountryStyle = (status: string, isHover: boolean = false) => {
     switch (status) {
       case 'visited':
-        return isHover ? mapColors.visitedHover : mapColors.visited;
+        return isHover ? themeMapColors.visitedHover : themeMapColors.visited;
       case 'wishlist':
-        return isHover ? mapColors.wishlistHover : mapColors.wishlist;
+        return isHover ? themeMapColors.wishlistHover : themeMapColors.wishlist;
       default:
-        return isHover ? mapColors.hover : mapColors.default;
+        return isHover ? themeMapColors.hover : themeMapColors.default;
     }
   };
 
@@ -68,7 +73,7 @@ function MapContent({ onCountryClick, onCountrySelect }: { onCountryClick?: (cou
       .then(data => {
         const geoJsonLayer = L.geoJSON(data, {
           style: (feature) => {
-            if (!feature || !feature.properties) return mapColors.default;
+            if (!feature || !feature.properties) return themeMapColors.default;
             const countryName = getCountryName(feature.properties);
             const status = getCountryStatus(countryName);
             return getCountryStyle(status);
@@ -131,14 +136,18 @@ function MapContent({ onCountryClick, onCountrySelect }: { onCountryClick?: (cou
       .catch(error => {
         console.error('Error loading world data:', error);
       });
-  }, [map, onCountryClick, onCountrySelect, currentZoom]);
+  }, [map, onCountryClick, onCountrySelect, currentZoom, currentTheme.id]);
 
   return null;
 }
 
 export default function WorldMap({ onCountryClick }: WorldMapProps) {
+  const { currentTheme } = useTheme();
   const [selectedCountry, setSelectedCountry] = useState<SelectedCountry | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const themeKey = currentTheme.id as keyof typeof mapColors;
+  const themeMapColors = mapColors[themeKey] || mapColors.light;
 
   const handleCountrySelect = (country: SelectedCountry) => {
     setSelectedCountry(country);
@@ -158,7 +167,7 @@ export default function WorldMap({ onCountryClick }: WorldMapProps) {
         minZoom={2}
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
-        style={{ height: '100%', width: '100%', backgroundColor: mapColors.background.fillColor }}
+        style={{ height: '100%', width: '100%', backgroundColor: themeMapColors.background.fillColor }}
         className="z-0"
       >
         <MapContent onCountryClick={onCountryClick} onCountrySelect={handleCountrySelect} />

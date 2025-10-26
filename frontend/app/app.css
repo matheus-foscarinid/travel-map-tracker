@@ -6,13 +6,52 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
+:root {
+  --color-background: #f9fafb;
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f3f4f6;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+  --color-border: #e5e7eb;
+  --color-border-light: #f3f4f6;
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-secondary: #6b7280;
+  --color-secondary-hover: #4b5563;
+  --color-success: #10b981;
+  --color-success-hover: #059669;
+  --color-warning: #f59e0b;
+  --color-warning-hover: #d97706;
+  --color-error: #ef4444;
+  --color-error-hover: #dc2626;
+}
+
+.theme-bg { background-color: var(--color-background); }
+.theme-surface { background-color: var(--color-surface); }
+.theme-surface-secondary { background-color: var(--color-surface-secondary); }
+.theme-text-primary { color: var(--color-text-primary); }
+.theme-text-secondary { color: var(--color-text-secondary); }
+.theme-text-muted { color: var(--color-text-muted); }
+.theme-border { border-color: var(--color-border); }
+.theme-border-light { border-color: var(--color-border-light); }
+.theme-primary { background-color: var(--color-primary); }
+.theme-primary:hover { background-color: var(--color-primary-hover); }
+.theme-primary-text { color: var(--color-primary); }
+.theme-secondary { background-color: var(--color-secondary); }
+.theme-secondary:hover { background-color: var(--color-secondary-hover); }
+.theme-success { background-color: var(--color-success); }
+.theme-success:hover { background-color: var(--color-success-hover); }
+.theme-warning { background-color: var(--color-warning); }
+.theme-warning:hover { background-color: var(--color-warning-hover); }
+.theme-error { background-color: var(--color-error); }
+.theme-error:hover { background-color: var(--color-error-hover); }
+
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Custom styles for Leaflet map */

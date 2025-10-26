@@ -1,5 +1,6 @@
 import type { Route } from "./+types/statistics";
 import { Globe, Bookmark, Calendar, MapPin, Info, Trophy } from 'lucide-react';
+import { useTheme } from '../hooks/useTheme';
 
 const PROGRESS_DESCRIPTION = "You've visited {visitedCount} out of {totalCountries} UN member countries, covering {worldPercentage}% of the world!";
 
@@ -7,34 +8,39 @@ interface StatCardProps {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   value: string | number;
-  iconBg: string;
-  iconColor: string;
-  valueColor: string;
+  color: string;
   tooltip?: string;
 }
 
-function StatCard({ icon: Icon, title, value, iconBg, iconColor, valueColor, tooltip }: StatCardProps) {
+function StatCard({ icon: Icon, title, value, color, tooltip }: StatCardProps) {
+  const { currentTheme } = useTheme();
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="theme-surface rounded-lg shadow-md p-6 theme-border border">
       <div className="flex items-center">
         <div className="flex-shrink-0">
-          <div className={`w-8 h-8 ${iconBg} rounded-full flex items-center justify-center`}>
-            <Icon className={`w-5 h-5 ${iconColor}`} />
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: `${color}20` }}
+          >
+            <Icon
+              className="w-5 h-5"
+            />
           </div>
         </div>
         <div className="ml-4">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+          <h3 className="text-lg font-semibold theme-text-primary flex items-center">
             {title}
             {tooltip && (
               <div className="group relative ml-2">
-                <Info className="w-4 h-4 text-gray-400 cursor-help" />
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                <Info className="w-4 h-4 theme-text-muted cursor-help" />
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 theme-surface theme-border border text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10 theme-text-primary">
                   {tooltip}
                 </div>
               </div>
             )}
           </h3>
-          <p className={`text-2xl font-bold ${valueColor}`}>{value}</p>
+          <p className="text-2xl font-bold" style={{ color: color }}>{value}</p>
         </div>
       </div>
     </div>
@@ -51,35 +57,43 @@ interface CountryListProps {
   countries: Country[];
   title: string;
   icon: React.ComponentType<{ className?: string }>;
-  iconColor: string;
-  bgColor: string;
-  badgeColor: string;
+  color: string;
   emptyMessage: string;
 }
 
-function CountryList({ countries, title, icon: Icon, iconColor, bgColor, badgeColor, emptyMessage }: CountryListProps) {
+function CountryList({ countries, title, icon: Icon, color, emptyMessage }: CountryListProps) {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="theme-surface rounded-lg shadow-md p-6 theme-border border">
       <div className="flex items-center mb-4">
-        <Icon className={`w-5 h-5 ${iconColor} mr-2`} />
-        <h3 className="text-lg font-semibold text-gray-900">{title} ({countries.length})</h3>
+        <Icon className="w-5 h-5 mr-2" style={{ color: color }} />
+        <h3 className="text-lg font-semibold theme-text-primary">{title} ({countries.length})</h3>
       </div>
       <div className="space-y-2 max-h-64 overflow-y-auto">
         {countries.length > 0 ? (
           countries.map((country, index) => (
-            <div key={index} className={`flex items-center justify-between py-2 px-3 ${bgColor} rounded-lg`}>
+            <div
+              key={index}
+              className="flex items-center justify-between py-2 px-3 rounded-lg"
+              style={{ backgroundColor: `${color}10` }}
+            >
               <div className="flex items-center">
                 <span className="text-2xl mr-3">{country.flag}</span>
-                <span className="font-medium text-gray-900">{country.name}</span>
+                <span className="font-medium theme-text-primary">{country.name}</span>
               </div>
-              <span className={`text-sm text-gray-500 ${badgeColor} px-2 py-1 rounded-full`}>
+              <span
+                className="text-sm px-2 py-1 rounded-full"
+                style={{
+                  backgroundColor: `${color}20`,
+                  color: color
+                }}
+              >
                 {country.continent}
               </span>
             </div>
           ))
         ) : (
-          <div className="text-center py-8 text-gray-500">
-            <Icon className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+          <div className="text-center py-8 theme-text-muted">
+            <Icon className="w-12 h-12 mx-auto mb-2 theme-text-muted" />
             <p>{emptyMessage}</p>
           </div>
         )}
@@ -101,22 +115,22 @@ function ProgressSection({ visitedCount, totalCountries, worldPercentage }: Prog
     .replace('{worldPercentage}', worldPercentage);
 
   return (
-    <div className="mt-8 bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Travel Progress</h3>
+    <div className="mt-8 theme-surface rounded-lg shadow-md p-6 theme-border border">
+      <h3 className="text-lg font-semibold theme-text-primary mb-4">Travel Progress</h3>
       <div className="space-y-4">
         <div>
-          <div className="flex justify-between text-sm text-gray-600 mb-2">
+          <div className="flex justify-between text-sm theme-text-secondary mb-2">
             <span>World Coverage</span>
             <span>{visitedCount} / {totalCountries} countries</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
+          <div className="w-full theme-surface-secondary rounded-full h-3">
             <div
               className="bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full transition-all duration-500"
               style={{ width: `${worldPercentage}%` }}
             ></div>
           </div>
         </div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm theme-text-muted">
           {description}
         </div>
       </div>
@@ -125,6 +139,8 @@ function ProgressSection({ visitedCount, totalCountries, worldPercentage }: Prog
 }
 
 export default function Statistics() {
+  const { currentTheme } = useTheme();
+
   const visitedCountries = [
     { name: 'Brasil', flag: '🇧🇷', continent: 'South America' },
     { name: 'France', flag: '🇫🇷', continent: 'Europe' },
@@ -153,11 +169,11 @@ export default function Statistics() {
   const continentCount = continents.length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen theme-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Travel Statistics</h1>
-          <p className="text-gray-600">Track your travel progress and discover insights about your journeys.</p>
+          <h1 className="text-3xl font-bold theme-text-primary mb-2">Travel Statistics</h1>
+          <p className="theme-text-secondary">Track your travel progress and discover insights about your journeys.</p>
         </div>
 
         {/* Main Statistics Cards */}
@@ -166,34 +182,26 @@ export default function Statistics() {
             icon={Globe}
             title="Countries Visited"
             value={visitedCount}
-            iconBg="bg-green-100"
-            iconColor="text-green-600"
-            valueColor="text-green-600"
+            color={currentTheme.colors.success}
           />
           <StatCard
             icon={MapPin}
             title="Continents"
             value={continentCount}
-            iconBg="bg-purple-100"
-            iconColor="text-purple-600"
-            valueColor="text-purple-600"
+            color={currentTheme.colors.primary}
           />
           <StatCard
             icon={Trophy}
             title="World Coverage"
             value={`${worldPercentage}%`}
-            iconBg="bg-blue-100"
-            iconColor="text-blue-600"
-            valueColor="text-blue-600"
+            color={currentTheme.colors.secondary}
             tooltip="Based on 195 UN member countries"
           />
           <StatCard
             icon={Bookmark}
             title="Wishlist"
             value={wishlistCount}
-            iconBg="bg-yellow-100"
-            iconColor="text-yellow-600"
-            valueColor="text-yellow-600"
+            color={currentTheme.colors.warning}
           />
         </div>
 
@@ -202,18 +210,14 @@ export default function Statistics() {
             countries={visitedCountries}
             title="Countries Visited"
             icon={Globe}
-            iconColor="text-green-600"
-            bgColor="bg-green-50"
-            badgeColor="bg-green-100"
+            color={currentTheme.colors.success}
             emptyMessage="No countries visited yet"
           />
           <CountryList
             countries={wishlistCountries}
             title="Wishlist"
             icon={Bookmark}
-            iconColor="text-yellow-600"
-            bgColor="bg-yellow-50"
-            badgeColor="bg-yellow-100"
+            color={currentTheme.colors.warning}
             emptyMessage="No countries in wishlist"
           />
         </div>

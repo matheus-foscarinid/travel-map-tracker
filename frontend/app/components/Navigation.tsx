@@ -1,5 +1,7 @@
 import { Link, useLocation } from 'react-router';
 import { Home, Settings, BarChart3 } from 'lucide-react';
+import { useTheme }  from '../hooks/useTheme';
+
 
 interface NavItem {
   name: string;
@@ -28,15 +30,17 @@ const navigation: NavItem[] = [
 export default function Navigation() {
   const location = useLocation();
   const currentPath = location.pathname;
-
+  const { currentTheme } = useTheme();
+  const isDark = currentTheme.type === 'dark';
+  const logo = isDark ? '/logo-dark.png' : '/logo-light.png';
   return (
-    <nav className="bg-white shadow-lg border-b border-gray-200">
+    <nav className="theme-surface shadow-lg theme-border border-b">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-gray-900 px-4 sm:px-6 lg:px-8">
-                Travel Map Tracker
+              <h1 className="text-2xl font-bold theme-text-primary px-4 sm:px-6 lg:px-8">
+                <img src={logo} alt="Logo" className="h-10" />
               </h1>
             </div>
           </div>
@@ -51,8 +55,8 @@ export default function Navigation() {
                   to={item.href}
                   className={`flex items-center space-x-2 px-3 py-2 text-sm font-medium transition-colors duration-200 ${
                     isActive
-                      ? 'bg-indigo-100 text-indigo-700 border-b-2 border-indigo-500'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      ? 'theme-primary text-white border-b-2 border-primary'
+                      : 'theme-text-secondary hover:theme-text-primary hover:theme-surface-secondary'
                   }`}
                 >
                   <IconComponent className="w-5 h-5" />

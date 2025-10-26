@@ -1,48 +1,194 @@
 {
-  "default": {
-    "fillColor": "#9CA3AF",
-    "fillOpacity": 0.8,
-    "weight": 1,
-    "opacity": 1,
-    "color": "#F3F4F6",
-    "dashArray": "0"
+  "light": {
+    "default": {
+      "fillColor": "#9CA3AF",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#F3F4F6",
+      "dashArray": "0"
+    },
+    "hover": {
+      "fillColor": "#6B7280",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "visited": {
+      "fillColor": "#10B981",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#F3F4F6",
+      "dashArray": "0"
+    },
+    "visitedHover": {
+      "fillColor": "#059669",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "wishlist": {
+      "fillColor": "#F59E0B",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#F3F4F6",
+      "dashArray": "0"
+    },
+    "wishlistHover": {
+      "fillColor": "#D97706",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "background": {
+      "fillColor": "#cce3ff",
+      "fillOpacity": 1,
+      "weight": 0,
+      "opacity": 1,
+      "dashArray": "0"
+    }
   },
-  "hover": {
-    "fillColor": "#6B7280",
-    "fillOpacity": 0.9,
-    "weight": 2
+  "midnight": {
+    "default": {
+      "fillColor": "#475569",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#334155",
+      "dashArray": "0"
+    },
+    "hover": {
+      "fillColor": "#64748b",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "visited": {
+      "fillColor": "#22c55e",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#334155",
+      "dashArray": "0"
+    },
+    "visitedHover": {
+      "fillColor": "#16a34a",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "wishlist": {
+      "fillColor": "#f59e0b",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#334155",
+      "dashArray": "0"
+    },
+    "wishlistHover": {
+      "fillColor": "#d97706",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "background": {
+      "fillColor": "#1e3a8a",
+      "fillOpacity": 1,
+      "weight": 0,
+      "opacity": 1,
+      "dashArray": "0"
+    }
   },
-  "visited": {
-    "fillColor": "#10B981",
-    "fillOpacity": 0.8,
-    "weight": 1,
-    "opacity": 1,
-    "color": "#F3F4F6",
-    "dashArray": "0"
+  "gruvbox": {
+    "default": {
+      "fillColor": "#665c54",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#504945",
+      "dashArray": "0"
+    },
+    "hover": {
+      "fillColor": "#7c6f64",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "visited": {
+      "fillColor": "#b8bb26",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#504945",
+      "dashArray": "0"
+    },
+    "visitedHover": {
+      "fillColor": "#98971a",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "wishlist": {
+      "fillColor": "#fabd2f",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#504945",
+      "dashArray": "0"
+    },
+    "wishlistHover": {
+      "fillColor": "#d79921",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "background": {
+      "fillColor": "#1d2021",
+      "fillOpacity": 1,
+      "weight": 0,
+      "opacity": 1,
+      "dashArray": "0"
+    }
   },
-  "visitedHover": {
-    "fillColor": "#059669",
-    "fillOpacity": 0.9,
-    "weight": 2
-  },
-  "wishlist": {
-    "fillColor": "#F59E0B",
-    "fillOpacity": 0.8,
-    "weight": 1,
-    "opacity": 1,
-    "color": "#F3F4F6",
-    "dashArray": "0"
-  },
-  "wishlistHover": {
-    "fillColor": "#D97706",
-    "fillOpacity": 0.9,
-    "weight": 2
-  },
-  "background": {
-    "fillColor": "#cce3ff",
-    "fillOpacity": 1,
-    "weight": 0,
-    "opacity": 1,
-    "dashArray": "0"
+  "ocean": {
+    "default": {
+      "fillColor": "#94a3b8",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#e0f2fe",
+      "dashArray": "0"
+    },
+    "hover": {
+      "fillColor": "#64748b",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "visited": {
+      "fillColor": "#059669",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#e0f2fe",
+      "dashArray": "0"
+    },
+    "visitedHover": {
+      "fillColor": "#047857",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "wishlist": {
+      "fillColor": "#d97706",
+      "fillOpacity": 0.8,
+      "weight": 1,
+      "opacity": 1,
+      "color": "#e0f2fe",
+      "dashArray": "0"
+    },
+    "wishlistHover": {
+      "fillColor": "#b45309",
+      "fillOpacity": 0.9,
+      "weight": 2
+    },
+    "background": {
+      "fillColor": "#bae6fd",
+      "fillOpacity": 1,
+      "weight": 0,
+      "opacity": 1,
+      "dashArray": "0"
+    }
   }
 }
