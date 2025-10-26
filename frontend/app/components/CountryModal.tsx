@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
+import { Globe, Bookmark } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import { useCountryData } from '../hooks/useCountryData';
 
 interface CountryModalProps {
   isOpen: boolean;
@@ -10,6 +12,35 @@ interface CountryModalProps {
 
 export default function CountryModal({ isOpen, onClose, countryName, countryCode }: CountryModalProps) {
   const { currentTheme } = useTheme();
+  const { visitedCountries, wishlistCountries, updateCountries } = useCountryData();
+
+  const getCountryStatus = () => {
+    if (visitedCountries.includes(countryName)) return 'visited';
+    if (wishlistCountries.includes(countryName)) return 'wishlist';
+    return 'none';
+  };
+
+  const toggleVisited = () => {
+    const newVisited = visitedCountries.includes(countryName)
+      ? visitedCountries.filter(name => name !== countryName)
+      : [...visitedCountries, countryName];
+
+    // Remove from wishlist if adding to visited
+    const newWishlist = wishlistCountries.filter(name => name !== countryName);
+
+    updateCountries(newVisited, newWishlist);
+  };
+
+  const toggleWishlist = () => {
+    const newWishlist = wishlistCountries.includes(countryName)
+      ? wishlistCountries.filter(name => name !== countryName)
+      : [...wishlistCountries, countryName];
+
+    // Remove from visited if adding to wishlist
+    const newVisited = visitedCountries.filter(name => name !== countryName);
+
+    updateCountries(newVisited, newWishlist);
+  };
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -72,36 +103,38 @@ export default function CountryModal({ isOpen, onClose, countryName, countryCode
             )}
 
             <div>
-              <label className="block text-sm font-medium theme-text-secondary mb-1">
+              <label className="block text-sm font-medium theme-text-secondary mb-3">
                 Status
               </label>
               <div className="flex space-x-2">
                 <button
-                  className="px-3 py-1 rounded-full text-sm font-medium transition-colors"
+                  onClick={toggleVisited}
+                  className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    getCountryStatus() === 'visited'
+                      ? 'text-white'
+                      : 'theme-text-secondary theme-border border hover:theme-surface-secondary'
+                  }`}
                   style={{
-                    backgroundColor: `${currentTheme.colors.success}20`,
-                    color: currentTheme.colors.success
+                    backgroundColor: getCountryStatus() === 'visited' ? currentTheme.colors.success : 'transparent'
                   }}
                 >
+                  <Globe className="w-4 h-4 mr-2" />
                   Visited
                 </button>
+
                 <button
-                  className="px-3 py-1 rounded-full text-sm font-medium transition-colors"
+                  onClick={toggleWishlist}
+                  className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    getCountryStatus() === 'wishlist'
+                      ? 'text-white'
+                      : 'theme-text-secondary theme-border border hover:theme-surface-secondary'
+                  }`}
                   style={{
-                    backgroundColor: `${currentTheme.colors.warning}20`,
-                    color: currentTheme.colors.warning
+                    backgroundColor: getCountryStatus() === 'wishlist' ? currentTheme.colors.warning : 'transparent'
                   }}
                 >
+                  <Bookmark className="w-4 h-4 mr-2" />
                   Wishlist
-                </button>
-                <button
-                  className="px-3 py-1 rounded-full text-sm font-medium transition-colors"
-                  style={{
-                    backgroundColor: `${currentTheme.colors.mapDefault}20`,
-                    color: currentTheme.colors.mapDefault
-                  }}
-                >
-                  Not Visited
                 </button>
               </div>
             </div>
@@ -109,15 +142,12 @@ export default function CountryModal({ isOpen, onClose, countryName, countryCode
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end space-x-3 p-6 theme-border border-t theme-surface-secondary rounded-b-lg">
+        <div className="flex justify-end p-6 theme-border border-t theme-surface-secondary rounded-b-lg">
           <button
             onClick={onClose}
             className="px-4 py-2 theme-text-secondary theme-surface theme-border border rounded-md hover:theme-surface-secondary transition-colors"
           >
             Close
-          </button>
-          <button className="px-4 py-2 theme-primary text-white rounded-md hover:bg-indigo-700 transition-colors">
-            Save Changes
           </button>
         </div>
       </div>
