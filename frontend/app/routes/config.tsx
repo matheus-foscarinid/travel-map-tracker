@@ -1,6 +1,6 @@
 import type { Route } from "./+types/config";
 import { useState } from 'react';
-import { User, Mail, Palette, LogOut, Save, MapPin, Eye } from 'lucide-react';
+import { User, Mail, Palette, LogOut, Save } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 
 export function meta({}: Route.MetaArgs) {
@@ -14,11 +14,9 @@ export default function Config() {
   const { currentTheme, setTheme, availableThemes } = useTheme();
   const [userName, setUserName] = useState('John Doe');
   const [userEmail, setUserEmail] = useState('john.doe@example.com');
-  const [showCountryLabels, setShowCountryLabels] = useState(true);
-  const [defaultMapView, setDefaultMapView] = useState('world');
 
   const handleSaveSettings = () => {
-    console.log('Saving settings:', { userName, userEmail, currentTheme: currentTheme.id, showCountryLabels, defaultMapView });
+    console.log('Saving settings:', { userName, userEmail, currentTheme: currentTheme.id });
     alert('Settings saved successfully!');
   };
 
@@ -109,45 +107,6 @@ export default function Config() {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Map Preferences */}
-          <div className="theme-surface rounded-lg shadow-md p-6 theme-border border">
-            <div className="flex items-center mb-6">
-              <MapPin className="w-6 h-6 theme-primary-text mr-3" />
-              <h2 className="text-xl font-semibold theme-text-primary">Map Preferences</h2>
-            </div>
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium theme-text-secondary mb-2">
-                  Default Map View
-                </label>
-                <select
-                  value={defaultMapView}
-                  onChange={(e) => setDefaultMapView(e.target.value)}
-                  className="w-full px-3 py-2 theme-border border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 theme-surface theme-text-primary"
-                >
-                  <option value="world">World View</option>
-                  <option value="europe">Europe</option>
-                  <option value="north-america">North America</option>
-                  <option value="asia">Asia</option>
-                  <option value="africa">Africa</option>
-                  <option value="south-america">South America</option>
-                </select>
-              </div>
-              <div>
-                <label className="flex items-center">
-                  <Eye className="w-4 h-4 mr-2" />
-                  <input
-                    type="checkbox"
-                    checked={showCountryLabels}
-                    onChange={(e) => setShowCountryLabels(e.target.checked)}
-                    className="rounded theme-border text-indigo-600 focus:ring-indigo-500 mr-3"
-                  />
-                  <span className="text-sm theme-text-secondary">Show country labels by default</span>
-                </label>
-              </div>
             </div>
           </div>
         </div>

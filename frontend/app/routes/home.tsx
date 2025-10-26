@@ -1,6 +1,7 @@
 import type { Route } from "./+types/home";
 import WorldMap from "../components/WorldMap";
 import { useTheme } from "../hooks/useTheme";
+import { useCountryData } from "../hooks/useCountryData";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,10 +12,10 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   const { currentTheme } = useTheme();
+  const { visitedCountries, wishlistCountries } = useCountryData();
 
   const handleCountryClick = (country: any) => {
     console.log('Country clicked:', country.properties.NAME || country.properties.ADMIN);
-    // You can add more functionality here, like opening a modal or navigating to country details
   };
 
   return (
@@ -30,11 +31,11 @@ export default function Home() {
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 rounded" style={{ backgroundColor: currentTheme.colors.mapVisited }}></div>
-              <span className="text-xs theme-text-secondary">Visited</span>
+              <span className="text-xs theme-text-secondary">Visited ({visitedCountries.length})</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 rounded" style={{ backgroundColor: currentTheme.colors.mapWishlist }}></div>
-              <span className="text-xs theme-text-secondary">Wishlist</span>
+              <span className="text-xs theme-text-secondary">Wishlist ({wishlistCountries.length})</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 rounded" style={{ backgroundColor: currentTheme.colors.mapDefault }}></div>

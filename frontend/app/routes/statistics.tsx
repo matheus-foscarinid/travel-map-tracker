@@ -1,6 +1,8 @@
 import type { Route } from "./+types/statistics";
 import { Globe, Bookmark, Calendar, MapPin, Info, Trophy } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import { useCountryData } from '../hooks/useCountryData';
+import { getCountryFlag, getCountryContinent, TOTAL_COUNTRIES } from '../config/countries';
 
 const PROGRESS_DESCRIPTION = "You've visited {visitedCount} out of {totalCountries} UN member countries, covering {worldPercentage}% of the world!";
 
@@ -65,7 +67,7 @@ function CountryList({ countries, title, icon: Icon, color, emptyMessage }: Coun
   return (
     <div className="theme-surface rounded-lg shadow-md p-6 theme-border border">
       <div className="flex items-center mb-4">
-        <Icon className="w-5 h-5 mr-2" style={{ color: color }} />
+        <Icon className="w-5 h-5 mr-2" />
         <h3 className="text-lg font-semibold theme-text-primary">{title} ({countries.length})</h3>
       </div>
       <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -140,32 +142,26 @@ function ProgressSection({ visitedCount, totalCountries, worldPercentage }: Prog
 
 export default function Statistics() {
   const { currentTheme } = useTheme();
+  const { visitedCountries, wishlistCountries } = useCountryData();
 
-  const visitedCountries = [
-    { name: 'Brasil', flag: '🇧🇷', continent: 'South America' },
-    { name: 'France', flag: '🇫🇷', continent: 'Europe' },
-    { name: 'Germany', flag: '🇩🇪', continent: 'Europe' },
-    { name: 'Portugal', flag: '🇵🇹', continent: 'Europe' },
-    { name: 'Spain', flag: '🇪🇸', continent: 'Europe' },
-    { name: 'Italy', flag: '🇮🇹', continent: 'Europe' },
-    { name: 'United Kingdom', flag: '🇬🇧', continent: 'Europe' },
-    { name: 'Argentina', flag: '🇦🇷', continent: 'South America' },
-    { name: 'Italy', flag: '🇮🇹', continent: 'Europe' },
-    { name: 'Paraguay', flag: '🇵🇾', continent: 'South America' },
-    { name: 'Uruguay', flag: '🇺🇾', continent: 'South America' },
-  ];
-
-  const wishlistCountries = [
-    { name: 'Thailand', flag: '🇹🇭', continent: 'Asia' },
-    { name: 'New Zealand', flag: '🇳🇿', continent: 'Oceania' }
-  ];
-
-  const totalCountries = 195;
+  const totalCountries = TOTAL_COUNTRIES;
   const visitedCount = visitedCountries.length;
   const wishlistCount = wishlistCountries.length;
   const worldPercentage = ((visitedCount / totalCountries) * 100).toFixed(1);
 
-  const continents = [...new Set(visitedCountries.map(country => country.continent))];
+  const visitedCountryObjects = visitedCountries.map(name => ({
+    name,
+    flag: getCountryFlag(name),
+    continent: getCountryContinent(name)
+  }));
+
+  const wishlistCountryObjects = wishlistCountries.map(name => ({
+    name,
+    flag: getCountryFlag(name),
+    continent: getCountryContinent(name)
+  }));
+
+  const continents = [...new Set(visitedCountryObjects.map(country => country.continent))];
   const continentCount = continents.length;
 
   return (
@@ -195,7 +191,7 @@ export default function Statistics() {
             title="World Coverage"
             value={`${worldPercentage}%`}
             color={currentTheme.colors.secondary}
-            tooltip="Based on 195 UN member countries"
+            tooltip={`Based on ${TOTAL_COUNTRIES} UN member countries`}
           />
           <StatCard
             icon={Bookmark}
@@ -207,14 +203,14 @@ export default function Statistics() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <CountryList
-            countries={visitedCountries}
+            countries={visitedCountryObjects}
             title="Countries Visited"
             icon={Globe}
             color={currentTheme.colors.success}
             emptyMessage="No countries visited yet"
           />
           <CountryList
-            countries={wishlistCountries}
+            countries={wishlistCountryObjects}
             title="Wishlist"
             icon={Bookmark}
             color={currentTheme.colors.warning}

@@ -4,7 +4,10 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import mapColors from '../config/mapColors.json';
 import CountryModal from './CountryModal';
+import CountryManagementModal from './CountryManagementModal';
 import { useTheme } from '../hooks/useTheme';
+import { useCountryData } from '../hooks/useCountryData';
+import { Plus } from 'lucide-react';
 import './WorldMap.css';
 
 interface CountryData {
@@ -25,24 +28,17 @@ function getCountryName(properties: { name: string }): string {
   return properties.name || 'Unknown Country';
 }
 
-function MapContent({ onCountryClick, onCountrySelect }: { onCountryClick?: (country: CountryData) => void; onCountrySelect: (country: SelectedCountry) => void }) {
+function MapContent({ onCountryClick, onCountrySelect, getCountryStatus }: {
+  onCountryClick?: (country: CountryData) => void;
+  onCountrySelect: (country: SelectedCountry) => void;
+  getCountryStatus: (countryName: string) => 'visited' | 'wishlist' | 'default';
+}) {
   const map = useMap();
   const { currentTheme } = useTheme();
   const [currentZoom, setCurrentZoom] = useState(2);
 
   const themeKey = currentTheme.id as keyof typeof mapColors;
   const themeMapColors = mapColors[themeKey] || mapColors.light;
-
-  // * AI GENERATED FUNCTION
-  const getCountryStatus = (countryName: string) => {
-    const seed = countryName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const random = Math.sin(seed) * 10000;
-    const normalized = (random - Math.floor(random));
-
-    if (normalized < 0.3) return 'visited';
-    if (normalized < 0.5) return 'wishlist';
-    return 'default';
-  };
 
   const getCountryStyle = (status: string, isHover: boolean = false) => {
     switch (status) {
@@ -136,15 +132,17 @@ function MapContent({ onCountryClick, onCountrySelect }: { onCountryClick?: (cou
       .catch(error => {
         console.error('Error loading world data:', error);
       });
-  }, [map, onCountryClick, onCountrySelect, currentZoom, currentTheme.id]);
+  }, [map, onCountryClick, onCountrySelect, currentZoom, currentTheme.id, getCountryStatus]);
 
   return null;
 }
 
 export default function WorldMap({ onCountryClick }: WorldMapProps) {
   const { currentTheme } = useTheme();
+  const { visitedCountries, wishlistCountries, updateCountries, getCountryStatus } = useCountryData();
   const [selectedCountry, setSelectedCountry] = useState<SelectedCountry | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isManagementModalOpen, setIsManagementModalOpen] = useState(false);
 
   const themeKey = currentTheme.id as keyof typeof mapColors;
   const themeMapColors = mapColors[themeKey] || mapColors.light;
@@ -159,6 +157,18 @@ export default function WorldMap({ onCountryClick }: WorldMapProps) {
     setSelectedCountry(null);
   };
 
+  const handleOpenManagementModal = () => {
+    setIsManagementModalOpen(true);
+  };
+
+  const handleCloseManagementModal = () => {
+    setIsManagementModalOpen(false);
+  };
+
+  const handleUpdateCountries = (visited: string[], wishlist: string[]) => {
+    updateCountries(visited, wishlist);
+  };
+
   return (
     <div className="w-full h-full">
       <MapContainer
@@ -170,14 +180,35 @@ export default function WorldMap({ onCountryClick }: WorldMapProps) {
         style={{ height: '100%', width: '100%', backgroundColor: themeMapColors.background.fillColor }}
         className="z-0"
       >
-        <MapContent onCountryClick={onCountryClick} onCountrySelect={handleCountrySelect} />
+        <MapContent
+          onCountryClick={onCountryClick}
+          onCountrySelect={handleCountrySelect}
+          getCountryStatus={getCountryStatus}
+        />
       </MapContainer>
+
+      {/* Management Button */}
+      <button
+        onClick={handleOpenManagementModal}
+        className="absolute bottom-16 right-8 theme-surface rounded-full p-3 shadow-lg hover:shadow-xl transition-all theme-border border z-10"
+        style={{ color: currentTheme.colors.primary }}
+      >
+        <Plus className="w-6 h-6" />
+      </button>
 
       <CountryModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         countryName={selectedCountry?.name || ''}
         countryCode={selectedCountry?.code}
+      />
+
+      <CountryManagementModal
+        isOpen={isManagementModalOpen}
+        onClose={handleCloseManagementModal}
+        visitedCountries={visitedCountries}
+        wishlistCountries={wishlistCountries}
+        onUpdateCountries={handleUpdateCountries}
       />
     </div>
   );
