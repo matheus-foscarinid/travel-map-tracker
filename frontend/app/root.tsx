@@ -11,6 +11,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import Navigation from "./components/Navigation";
 import { ThemeProvider } from "./hooks/useTheme";
+import { CountryDataProvider } from "./hooks/useCountryData";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -46,10 +47,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <ThemeProvider>
-      <div className="min-h-screen theme-bg">
-        <Navigation />
-        <Outlet />
-      </div>
+      <CountryDataProvider>
+        <div className="min-h-screen theme-bg">
+          <Navigation />
+          <Outlet />
+        </div>
+      </CountryDataProvider>
     </ThemeProvider>
   );
 }

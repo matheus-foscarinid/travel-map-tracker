@@ -40,7 +40,6 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       const root = document.documentElement;
       const themeColors = currentTheme.colors;
 
-      // Set CSS custom properties
       root.style.setProperty('--color-background', themeColors.background);
       root.style.setProperty('--color-surface', themeColors.surface);
       root.style.setProperty('--color-surface-secondary', themeColors.surfaceSecondary);

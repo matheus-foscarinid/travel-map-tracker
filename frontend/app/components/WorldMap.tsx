@@ -17,6 +17,8 @@ interface CountryData {
 
 interface WorldMapProps {
   onCountryClick?: (country: CountryData) => void;
+  showLabels?: boolean;
+  showControls?: boolean;
 }
 
 interface SelectedCountry {
@@ -32,10 +34,13 @@ let worldDataCache: any = null;
 let cacheTimestamp: number = 0;
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
-function MapContent({ onCountryClick, onCountrySelect, getCountryStatus }: {
+function MapContent({ onCountryClick, onCountrySelect, getCountryStatus, visitedCountries, wishlistCountries, showLabels = true }: {
   onCountryClick?: (country: CountryData) => void;
   onCountrySelect: (country: SelectedCountry) => void;
   getCountryStatus: (countryName: string) => 'visited' | 'wishlist' | 'default';
+  visitedCountries: string[];
+  wishlistCountries: string[];
+  showLabels?: boolean;
 }) {
   const map = useMap();
   const { currentTheme } = useTheme();
@@ -172,7 +177,7 @@ function MapContent({ onCountryClick, onCountrySelect, getCountryStatus }: {
         const countryArea = countryBounds.getNorthEast().distanceTo(countryBounds.getSouthWest());
 
         const isSmallCountry = countryArea < 1000000;
-        const shouldShowLabel = !isSmallCountry || currentZoom >= 4;
+        const shouldShowLabel = showLabels && (!isSmallCountry || currentZoom >= 4);
 
         if (shouldShowLabel) {
           const textLabel = L.marker(countryCenter, {
@@ -222,7 +227,7 @@ function MapContent({ onCountryClick, onCountrySelect, getCountryStatus }: {
         }
       });
     }
-  }, [currentTheme.id, getCountryStatus, isLoading]);
+  }, [currentTheme.id, getCountryStatus, visitedCountries, wishlistCountries, isLoading]);
 
   if (error) {
     return (
@@ -261,7 +266,7 @@ function MapContent({ onCountryClick, onCountrySelect, getCountryStatus }: {
   return null;
 }
 
-export default function WorldMap({ onCountryClick }: WorldMapProps) {
+export default function WorldMap({ onCountryClick, showLabels = true, showControls = true }: WorldMapProps) {
   const { currentTheme } = useTheme();
   const { visitedCountries, wishlistCountries, updateCountries, getCountryStatus } = useCountryData();
   const [selectedCountry, setSelectedCountry] = useState<SelectedCountry | null>(null);
@@ -299,6 +304,10 @@ export default function WorldMap({ onCountryClick }: WorldMapProps) {
         center={[20, 0]}
         zoom={3}
         minZoom={2}
+        maxZoom={showControls ? 10 : 3}
+        zoomControl={showControls}
+        scrollWheelZoom={showControls}
+        doubleClickZoom={showControls}
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
         style={{ height: '100%', width: '100%', backgroundColor: themeMapColors.background.fillColor }}
@@ -308,17 +317,22 @@ export default function WorldMap({ onCountryClick }: WorldMapProps) {
           onCountryClick={onCountryClick}
           onCountrySelect={handleCountrySelect}
           getCountryStatus={getCountryStatus}
+          visitedCountries={visitedCountries}
+          wishlistCountries={wishlistCountries}
+          showLabels={showLabels}
         />
       </MapContainer>
 
       {/* Management Button */}
-      <button
-        onClick={handleOpenManagementModal}
-        className="absolute bottom-16 right-8 theme-surface rounded-full p-3 shadow-lg hover:shadow-xl transition-all theme-border border z-10"
-        style={{ color: currentTheme.colors.primary }}
-      >
-        <Plus className="w-6 h-6" />
-      </button>
+      {showControls && (
+        <button
+          onClick={handleOpenManagementModal}
+          className="absolute bottom-16 right-8 theme-surface rounded-full p-3 shadow-lg hover:shadow-xl transition-all theme-border border z-10"
+          style={{ color: currentTheme.colors.primary }}
+        >
+          <Plus className="w-6 h-6" />
+        </button>
+      )}
 
       <CountryModal
         isOpen={isModalOpen}

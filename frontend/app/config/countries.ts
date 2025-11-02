@@ -203,7 +203,6 @@ export const COUNTRIES: Country[] = [
   { name: 'Zimbabwe', code: 'ZW', flag: '🇿🇼', continent: 'Africa' }
 ];
 
-// Helper functions
 export function getCountryByName(name: string): Country | undefined {
   return COUNTRIES.find(country => country.name === name);
 }
