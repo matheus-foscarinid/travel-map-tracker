@@ -34,13 +34,14 @@ let worldDataCache: any = null;
 let cacheTimestamp: number = 0;
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
-function MapContent({ onCountryClick, onCountrySelect, getCountryStatus, visitedCountries, wishlistCountries, showLabels = true }: {
+function MapContent({ onCountryClick, onCountrySelect, getCountryStatus, visitedCountries, wishlistCountries, showLabels = true, showControls = true }: {
   onCountryClick?: (country: CountryData) => void;
   onCountrySelect: (country: SelectedCountry) => void;
   getCountryStatus: (countryName: string) => 'visited' | 'wishlist' | 'default';
   visitedCountries: string[];
   wishlistCountries: string[];
   showLabels?: boolean;
+  showControls?: boolean;
 }) {
   const map = useMap();
   const { currentTheme } = useTheme();
@@ -196,6 +197,19 @@ function MapContent({ onCountryClick, onCountrySelect, getCountryStatus, visited
 
     geoJsonLayerRef.current = geoJsonLayer;
     geoJsonLayer.addTo(map);
+
+    // Fit the entire world in view when controls are disabled (for export)
+    if (!showControls) {
+      // Wait a bit for the layer to render, then fit bounds to show entire world
+      setTimeout(() => {
+        if (geoJsonLayer.getBounds().isValid()) {
+          map.fitBounds(geoJsonLayer.getBounds().pad(0.05), {
+            maxZoom: 2,
+            animate: false
+          });
+        }
+      }, 100);
+    }
   };
 
   useEffect(() => {
@@ -214,7 +228,7 @@ function MapContent({ onCountryClick, onCountrySelect, getCountryStatus, visited
     };
 
     loadWorldData();
-  }, [map, onCountryClick, onCountrySelect, getCountryStatus]);
+  }, [map, onCountryClick, onCountrySelect, getCountryStatus, showControls]);
 
   useEffect(() => {
     if (geoJsonLayerRef.current && !isLoading) {
@@ -302,8 +316,8 @@ export default function WorldMap({ onCountryClick, showLabels = true, showContro
     <div className="w-full h-full relative">
       <MapContainer
         center={[20, 0]}
-        zoom={3}
-        minZoom={2}
+        zoom={showControls ? 3 : 2}
+        minZoom={1}
         maxZoom={showControls ? 10 : 3}
         zoomControl={showControls}
         scrollWheelZoom={showControls}
@@ -320,6 +334,7 @@ export default function WorldMap({ onCountryClick, showLabels = true, showContro
           visitedCountries={visitedCountries}
           wishlistCountries={wishlistCountries}
           showLabels={showLabels}
+          showControls={showControls}
         />
       </MapContainer>
 

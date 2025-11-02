@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -44,14 +45,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+function AppContent() {
+  const location = useLocation();
+  const isExportRoute = location.pathname === '/export';
+
+  return (
+    <div className="min-h-screen theme-bg">
+      {!isExportRoute && <Navigation />}
+      <Outlet />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <ThemeProvider>
       <CountryDataProvider>
-        <div className="min-h-screen theme-bg">
-          <Navigation />
-          <Outlet />
-        </div>
+        <AppContent />
       </CountryDataProvider>
     </ThemeProvider>
   );
