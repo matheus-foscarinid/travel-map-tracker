@@ -39,7 +39,7 @@ function StatCard({ icon: Icon, title, value, color, theme }: StatCardProps) {
             <Icon className="w-3 h-3" style={{ color: color }} />
           </div>
         </div>
-        <div className="ml-2">
+        <div className="ml-2 flex-1">
           <h3 className="text-xs font-semibold" style={{ color: theme.colors.textSecondary }}>{title}</h3>
           <p className="text-base font-bold" style={{ color: color }}>{value}</p>
         </div>
@@ -115,7 +115,7 @@ export default function Export() {
           </p>
         </div>
 
-        <div className="map-container-export h-[60vh] mb-4 rounded-lg overflow-hidden border" style={{ borderColor: currentTheme.colors.border }}>
+        <div className="map-container-export h-[70vh] mb-4 rounded-lg overflow-hidden border" style={{ borderColor: currentTheme.colors.border }}>
           <WorldMap onCountryClick={handleCountryClick} showLabels={false} showControls={false} />
         </div>
 
@@ -203,7 +203,7 @@ export default function Export() {
             <div className="flex items-center mb-3">
               <Globe className="w-4 h-4 mr-2" style={{ color: currentTheme.colors.success }} />
               <h3
-                className="text-sm font-semibold"
+                className="text-sm font-semibold flex-1"
                 style={{ color: currentTheme.colors.textPrimary }}
               >
                 Countries Visited ({visitedCount})
@@ -272,7 +272,7 @@ export default function Export() {
             <div className="flex items-center mb-3">
               <Bookmark className="w-4 h-4 mr-2" style={{ color: currentTheme.colors.warning }} />
               <h3
-                className="text-sm font-semibold"
+                className="text-sm font-semibold flex-1"
                 style={{ color: currentTheme.colors.textPrimary }}
               >
                 Wishlist ({wishlistCount})

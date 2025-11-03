@@ -198,17 +198,17 @@ function MapContent({ onCountryClick, onCountrySelect, getCountryStatus, visited
     geoJsonLayerRef.current = geoJsonLayer;
     geoJsonLayer.addTo(map);
 
-    // Fit the entire world in view when controls are disabled (for export)
     if (!showControls) {
-      // Wait a bit for the layer to render, then fit bounds to show entire world
       setTimeout(() => {
         if (geoJsonLayer.getBounds().isValid()) {
           map.fitBounds(geoJsonLayer.getBounds().pad(0.05), {
             maxZoom: 2,
             animate: false
           });
+
+          map.zoomIn();
         }
-      }, 100);
+      }, 50);
     }
   };
 
@@ -318,7 +318,7 @@ export default function WorldMap({ onCountryClick, showLabels = true, showContro
         center={[20, 0]}
         zoom={showControls ? 3 : 2}
         minZoom={1}
-        maxZoom={showControls ? 10 : 3}
+        maxZoom={showControls ? 10 : 4}
         zoomControl={showControls}
         scrollWheelZoom={showControls}
         doubleClickZoom={showControls}
