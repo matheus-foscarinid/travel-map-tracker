@@ -25,7 +25,6 @@ export default function Home() {
           <WorldMap onCountryClick={handleCountryClick} />
         </div>
 
-        {/* Legend */}
         <div className="absolute top-4 right-4 theme-surface rounded-lg shadow-lg p-4 z-10 theme-border border">
           <h3 className="text-sm font-semibold theme-text-primary mb-2">Legend</h3>
           <div className="space-y-2">

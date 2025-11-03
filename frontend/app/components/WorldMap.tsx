@@ -338,7 +338,6 @@ export default function WorldMap({ onCountryClick, showLabels = true, showContro
         />
       </MapContainer>
 
-      {/* Management Button */}
       {showControls && (
         <button
           onClick={handleOpenManagementModal}

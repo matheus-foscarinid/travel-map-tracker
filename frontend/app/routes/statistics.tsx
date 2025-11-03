@@ -172,7 +172,6 @@ export default function Statistics() {
           <p className="theme-text-secondary">Track your travel progress and discover insights about your journeys.</p>
         </div>
 
-        {/* Main Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             icon={Globe}

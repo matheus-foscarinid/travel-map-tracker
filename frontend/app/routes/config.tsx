@@ -34,7 +34,6 @@ export default function Config() {
         </div>
 
         <div className="space-y-8">
-          {/* User Profile Section */}
           <div className="theme-surface rounded-lg shadow-md p-6 theme-border border">
             <div className="flex items-center mb-6">
               <User className="w-6 h-6 theme-primary-text mr-3" />
@@ -70,7 +69,6 @@ export default function Config() {
             </div>
           </div>
 
-          {/* Theme Selection */}
           <div className="theme-surface rounded-lg shadow-md p-6 theme-border border">
             <div className="flex items-center mb-6">
               <Palette className="w-6 h-6 theme-primary-text mr-3" />
@@ -111,7 +109,6 @@ export default function Config() {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <button
             onClick={handleSignOut}

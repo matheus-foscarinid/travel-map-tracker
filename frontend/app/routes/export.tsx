@@ -73,7 +73,6 @@ export default function Export() {
     continent: getCountryContinent(name)
   }));
 
-  // Get last 10 countries from each list (assuming last added are at the end)
   const MAX_DISPLAYED = 10;
   const displayedVisited = visitedCountryObjects.slice(-MAX_DISPLAYED).reverse();
   const displayedWishlist = wishlistCountryObjects.slice(-MAX_DISPLAYED).reverse();
@@ -91,7 +90,6 @@ export default function Export() {
         color: currentTheme.colors.textPrimary
       }}
     >
-      {/* Botão de captura posicionado fora do conteúdo capturado */}
       <div className="absolute top-4 right-4 z-50">
         <CaptureButton
           targetId="export-content"
@@ -102,7 +100,6 @@ export default function Export() {
       </div>
 
       <div id="export-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        {/* Header */}
         <div className="mb-3">
           <h1
             className="text-xl font-bold mb-1"
@@ -118,12 +115,10 @@ export default function Export() {
           </p>
         </div>
 
-        {/* Map Section - Increased height to show full world */}
         <div className="map-container-export h-[60vh] mb-4 rounded-lg overflow-hidden border" style={{ borderColor: currentTheme.colors.border }}>
           <WorldMap onCountryClick={handleCountryClick} showLabels={false} showControls={false} />
         </div>
 
-        {/* Main Statistics Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
           <StatCard
             icon={Globe}
@@ -155,7 +150,6 @@ export default function Export() {
           />
         </div>
 
-        {/* Progress Bar */}
         <div
           className="rounded-lg shadow-sm p-4 mb-4 border"
           style={{
@@ -198,9 +192,7 @@ export default function Export() {
           </div>
         </div>
 
-        {/* Country Lists */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Visited Countries */}
           <div
             className="rounded-lg shadow-sm p-4 border"
             style={{
@@ -270,7 +262,6 @@ export default function Export() {
             </div>
           </div>
 
-          {/* Wishlist Countries */}
           <div
             className="rounded-lg shadow-sm p-4 border"
             style={{

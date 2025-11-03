@@ -141,7 +141,6 @@ export default function CountryModal({ isOpen, onClose, countryName, countryCode
           </div>
         </div>
 
-        {/* Footer */}
         <div className="flex justify-end p-6 theme-border border-t theme-surface-secondary rounded-b-lg">
           <button
             onClick={onClose}
