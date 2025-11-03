@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Globe, Bookmark } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import { useCountryData } from '../hooks/useCountryData';
+import { getCountryFlag } from '../config/countries';
 
 interface CountryModalProps {
   isOpen: boolean;
@@ -71,7 +72,8 @@ export default function CountryModal({ isOpen, onClose, countryName, countryCode
 
       <div className="relative theme-surface rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all theme-border border">
         <div className="flex items-center justify-between p-6 theme-border border-b">
-          <h2 className="text-xl font-semibold theme-text-primary">
+          <h2 className="text-xl font-semibold theme-text-primary flex items-center gap-2">
+            <span className="text-2xl">{getCountryFlag(countryName)}</span>
             {countryName}
           </h2>
           <button
