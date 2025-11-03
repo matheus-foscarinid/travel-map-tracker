@@ -113,63 +113,6 @@ body {
     overflow: hidden !important;
   }
 
-  /* Remover qualquer padding ou margin dos wrappers internos */
-  .map-container-export > div {
-    overflow: hidden !important;
-    height: 100% !important;
-    width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  /* Garantir que o mapa Leaflet preencha completamente o container */
-  .map-container-export .leaflet-container {
-    height: 100% !important;
-    width: 100% !important;
-    overflow: hidden !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  /* Forçar renderização completa do SVG do Leaflet */
-  .map-container-export .leaflet-container svg {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: none !important;
-    max-height: none !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-  }
-
-  /* Garantir que as camadas do Leaflet sejam renderizadas */
-  .map-container-export .leaflet-pane {
-    width: 100% !important;
-    height: 100% !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-  }
-
-  /* Ajustar o GeoJSON layer para renderizar completamente */
-  .map-container-export .leaflet-overlay-pane {
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  .map-container-export .leaflet-overlay-pane svg {
-    width: 100% !important;
-    height: 100% !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-  }
-
   .leaflet-tile-pane,
   .leaflet-overlay-pane,
   .leaflet-shadow-pane,

@@ -91,8 +91,8 @@ function MapContent({ onCountryClick, onCountrySelect, getCountryStatus, visited
       console.log(`Fetching world data (attempt ${retryCount + 1})`);
 
       const urls = [
+        '/world.geojson',
         'https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson',
-        '/world.geojson' // Local fallback
       ];
 
       const urlToTry = urls[retryCount % urls.length];

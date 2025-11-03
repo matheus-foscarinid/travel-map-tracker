@@ -18030,7 +18030,7 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "England"
+        "name": "United Kingdom"
       },
       "geometry": {
         "type": "MultiPolygon",
@@ -41570,7 +41570,7 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "USA"
+        "name": "United States"
       },
       "geometry": {
         "type": "MultiPolygon",
