@@ -1,10 +1,12 @@
 import type { Route } from "./+types/export";
+import { useState } from "react";
 import WorldMap from "../components/WorldMap";
 import CaptureButton from "../components/CaptureButton";
+import CountriesListDialog from "../components/CountriesListDialog";
 import { useTheme } from "../hooks/useTheme";
 import { useCountryData } from "../hooks/useCountryData";
 import { getCountryFlag, getCountryContinent, TOTAL_COUNTRIES } from "../config/countries";
-import { Globe, Bookmark, MapPin, Trophy } from 'lucide-react';
+import { Globe, Bookmark, MapPin, Trophy, Info } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -19,9 +21,10 @@ interface StatCardProps {
   value: string | number;
   color: string;
   theme: any;
+  tooltip?: string;
 }
 
-function StatCard({ icon: Icon, title, value, color, theme }: StatCardProps) {
+function StatCard({ icon: Icon, title, value, color, theme, tooltip }: StatCardProps) {
   return (
     <div
       className="rounded-lg shadow-sm p-3 border"
@@ -40,7 +43,25 @@ function StatCard({ icon: Icon, title, value, color, theme }: StatCardProps) {
           </div>
         </div>
         <div className="ml-2 flex-1">
-          <h3 className="text-xs font-semibold" style={{ color: theme.colors.textSecondary }}>{title}</h3>
+          <h3 className="text-xs font-semibold flex items-center" style={{ color: theme.colors.textSecondary }}>
+            {title}
+            {tooltip && (
+              <div className="group relative ml-1">
+                <Info className="w-3 h-3" style={{ color: theme.colors.textMuted }} />
+                <div
+                  className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10"
+                  style={{
+                    backgroundColor: theme.colors.surface,
+                    borderColor: theme.colors.border,
+                    color: theme.colors.textPrimary,
+                    border: `1px solid ${theme.colors.border}`
+                  }}
+                >
+                  {tooltip}
+                </div>
+              </div>
+            )}
+          </h3>
           <p className="text-base font-bold" style={{ color: color }}>{value}</p>
         </div>
       </div>
@@ -51,6 +72,7 @@ function StatCard({ icon: Icon, title, value, color, theme }: StatCardProps) {
 export default function Export() {
   const { currentTheme } = useTheme();
   const { visitedCountries, wishlistCountries } = useCountryData();
+  const [dialogOpen, setDialogOpen] = useState<'visited' | 'wishlist' | null>(null);
 
   const handleCountryClick = (country: any) => {
     console.log('Country clicked:', country.properties.NAME || country.properties.ADMIN);
@@ -140,6 +162,7 @@ export default function Export() {
             value={`${worldPercentage}%`}
             color={currentTheme.colors.secondary}
             theme={currentTheme}
+            tooltip={`Based on ${TOTAL_COUNTRIES} UN member countries`}
           />
           <StatCard
             icon={Bookmark}
@@ -239,15 +262,17 @@ export default function Export() {
                     </div>
                   ))}
                   {remainingVisited > 0 && (
-                    <div
-                      className="py-1.5 px-2 rounded text-xs text-center mt-1"
+                    <button
+                      onClick={() => setDialogOpen('visited')}
+                      className="py-1.5 px-2 rounded text-xs text-center mt-1 w-full transition-opacity hover:opacity-80"
                       style={{
                         backgroundColor: `${currentTheme.colors.success}10`,
-                        color: currentTheme.colors.textSecondary
+                        color: currentTheme.colors.textSecondary,
+                        cursor: 'pointer'
                       }}
                     >
                       More {remainingVisited} visited...
-                    </div>
+                    </button>
                   )}
                 </>
               ) : (
@@ -308,15 +333,17 @@ export default function Export() {
                     </div>
                   ))}
                   {remainingWishlist > 0 && (
-                    <div
-                      className="py-1.5 px-2 rounded text-xs text-center mt-1"
+                    <button
+                      onClick={() => setDialogOpen('wishlist')}
+                      className="py-1.5 px-2 rounded text-xs text-center mt-1 w-full transition-opacity hover:opacity-80"
                       style={{
                         backgroundColor: `${currentTheme.colors.warning}10`,
-                        color: currentTheme.colors.textSecondary
+                        color: currentTheme.colors.textSecondary,
+                        cursor: 'pointer'
                       }}
                     >
                       More {remainingWishlist} in wishlist...
-                    </div>
+                    </button>
                   )}
                 </>
               ) : (
@@ -332,6 +359,24 @@ export default function Export() {
           </div>
         </div>
       </div>
+
+      <CountriesListDialog
+        isOpen={dialogOpen === 'visited'}
+        onClose={() => setDialogOpen(null)}
+        countries={visitedCountryObjects}
+        title="Countries Visited"
+        icon={Globe}
+        color={currentTheme.colors.success}
+      />
+
+      <CountriesListDialog
+        isOpen={dialogOpen === 'wishlist'}
+        onClose={() => setDialogOpen(null)}
+        countries={wishlistCountryObjects}
+        title="Wishlist"
+        icon={Bookmark}
+        color={currentTheme.colors.warning}
+      />
     </div>
   );
 }
