@@ -5,7 +5,7 @@ from flask import Blueprint
 
 api_bp = Blueprint('api', __name__)
 
-from .routes import auth_bp
+from .auth import auth_bp
 from .countries import countries_bp
 from .marked_countries import marked_countries_bp
 
