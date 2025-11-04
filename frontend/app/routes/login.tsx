@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router';
 import { api } from '../utils/api';
 import { useTheme } from '../hooks/useTheme';
+import { useToast } from '../hooks/useToast';
 import { Globe } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
@@ -17,6 +18,7 @@ export default function Login() {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { currentTheme } = useTheme();
+  const { showError } = useToast();
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
   // Redirect if already authenticated
@@ -41,13 +43,13 @@ export default function Login() {
       navigate('/');
     } catch (error: any) {
       console.error('Login failed:', error);
-      alert(error.message || 'Login failed. Please try again.');
+      showError(error.message || 'Login failed. Please try again.');
     }
   };
 
   const handleGoogleError = () => {
     console.error('Google login failed');
-    alert('Google login failed. Please try again.');
+    showError('Google login failed. Please try again.');
   };
 
   return (

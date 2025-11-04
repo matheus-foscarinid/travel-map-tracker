@@ -14,7 +14,9 @@ import Navigation from "./components/Navigation";
 import { ThemeProvider } from "./hooks/useTheme";
 import { CountryDataProvider } from "./hooks/useCountryData";
 import { AuthProvider } from "./hooks/useAuth";
+import { ToastProvider } from "./hooks/useToast";
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { ToastContainer } from "./components/Toast";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -52,6 +54,7 @@ function AppContent() {
     <div className="min-h-screen theme-bg">
       <Navigation />
       <Outlet />
+      <ToastContainer />
     </div>
   );
 }
@@ -62,11 +65,13 @@ export default function App() {
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
       <ThemeProvider>
-        <AuthProvider>
-          <CountryDataProvider>
-            <AppContent />
-          </CountryDataProvider>
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <CountryDataProvider>
+              <AppContent />
+            </CountryDataProvider>
+          </AuthProvider>
+        </ToastProvider>
       </ThemeProvider>
     </GoogleOAuthProvider>
   );

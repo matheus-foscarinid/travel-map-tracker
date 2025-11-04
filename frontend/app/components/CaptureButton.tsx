@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import html2canvas from 'html2canvas';
 import { Download, Loader2 } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import { useToast } from '../hooks/useToast';
 
 interface CaptureButtonProps {
   /** ID ou ref do elemento a ser capturado. Se não fornecido, captura o body inteiro */
@@ -28,6 +29,7 @@ export default function CaptureButton({
 }: CaptureButtonProps) {
   const [isCapturing, setIsCapturing] = useState(false);
   const { currentTheme } = useTheme();
+  const { showError } = useToast();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleCapture = async () => {
@@ -41,7 +43,7 @@ export default function CaptureButton({
         element = document.getElementById(targetId);
         if (!element) {
           console.error(`Elemento com ID "${targetId}" não encontrado`);
-          alert(`Erro: Elemento com ID "${targetId}" não encontrado`);
+          showError(`Elemento com ID "${targetId}" não encontrado`);
           setIsCapturing(false);
           return;
         }
@@ -84,7 +86,7 @@ export default function CaptureButton({
       canvas.toBlob((blob) => {
         if (!blob) {
           console.error('Erro ao criar blob da imagem');
-          alert('Erro ao capturar a imagem. Por favor, tente novamente.');
+          showError('Erro ao capturar a imagem. Por favor, tente novamente.');
           setIsCapturing(false);
           return;
         }
@@ -107,7 +109,7 @@ export default function CaptureButton({
       }, 'image/png');
     } catch (error) {
       console.error('Erro ao capturar imagem:', error);
-      alert('Erro ao capturar a imagem. Por favor, tente novamente.');
+      showError('Erro ao capturar a imagem. Por favor, tente novamente.');
       setIsCapturing(false);
     }
   };

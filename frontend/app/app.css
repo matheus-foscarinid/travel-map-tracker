@@ -47,6 +47,21 @@
 .theme-error { background-color: var(--color-error); }
 .theme-error:hover { background-color: var(--color-error-hover); }
 
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast-animate {
+  animation: slide-in-right 0.3s ease-out;
+}
+
 html,
 body {
   background-color: var(--color-background);

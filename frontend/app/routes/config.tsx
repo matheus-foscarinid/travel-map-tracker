@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { User as UserIcon, Mail, Palette, LogOut, Save } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import { useAuth, type User } from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
 import { api } from '../utils/api';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 
@@ -16,6 +17,7 @@ export function meta({}: Route.MetaArgs) {
 function ConfigPage() {
   const { currentTheme, setTheme, availableThemes } = useTheme();
   const { user, updateUser, logout } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [saving, setSaving] = useState(false);
@@ -37,10 +39,10 @@ function ConfigPage() {
         email: userEmail,
       });
       updateUser(updatedUser);
-      alert('Settings saved successfully!');
+      showSuccess('Settings saved successfully!');
     } catch (error: any) {
       console.error('Failed to save settings:', error);
-      alert(error.message || 'Failed to save settings. Please try again.');
+      showError(error.message || 'Failed to save settings. Please try again.');
     } finally {
       setSaving(false);
     }
