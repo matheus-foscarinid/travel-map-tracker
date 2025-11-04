@@ -16,7 +16,7 @@ Aplicação web interativa para registrar, visualizar e acompanhar os países vi
 
 ## Arquitetura
 
-A aplicação segue uma arquitetura modular cliente/servidor**, separando claramente as responsabilidades:
+A aplicação segue uma arquitetura modular cliente/servidor, separando claramente as responsabilidades:
 
 - **Backend (Flask)**: Fornece API REST para gerenciamento de dados de viagens, países visitados e estatísticas
 - **Frontend (React)**: Interface do usuário responsiva com mapa interativo e funcionalidades de visualização
@@ -47,7 +47,7 @@ pip install -r requirements.txt
 
 # Configure as variáveis de ambiente
 cp env.example .env
-# Edite o arquivo .env com as configs
+# Edite o arquivo .env com os valores necessários (veja seção de Variáveis de Ambiente abaixo)
 
 # Execute o servidor Flask
 flask run
@@ -64,11 +64,36 @@ cd frontend
 # Instale as dependências
 npm install
 
+# Configure as variáveis de ambiente (veja seção de Variáveis de Ambiente abaixo)
+
 # Execute o servidor de desenvolvimento
 npm run dev
 ```
 
 O frontend estará disponível em `http://localhost:5173`
+
+## 🔐 Variáveis de Ambiente
+
+### Backend (`.env` no diretório `backend/`)
+
+Configure as seguintes variáveis no arquivo `.env`:
+
+```env
+SECRET_KEY=your-secret-key-here
+JWT_SECRET_KEY=your-jwt-secret-key-here
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+```
+
+### Frontend (`.env` no diretório `frontend/`)
+
+Configure as seguintes variáveis no arquivo `.env`:
+
+```env
+VITE_GOOGLE_CLIENT_ID=your-google-client-id
+```
+
+> **Nota:** Para obter as credenciais do Google OAuth, consulte a [documentação de Google Login](GOOGLE_LOGIN_DOCS.md) ou visite o [Google Cloud Console](https://console.cloud.google.com/).
 
 ## Estrutura do Projeto
 

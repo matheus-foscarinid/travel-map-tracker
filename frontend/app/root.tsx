@@ -5,14 +5,16 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLocation,
 } from "react-router";
+import type { ReactNode } from "react";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import Navigation from "./components/Navigation";
 import { ThemeProvider } from "./hooks/useTheme";
 import { CountryDataProvider } from "./hooks/useCountryData";
+import { AuthProvider } from "./hooks/useAuth";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -27,7 +29,7 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -46,24 +48,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function AppContent() {
-  const location = useLocation();
-  const isExportRoute = location.pathname === '/export';
-
   return (
     <div className="min-h-screen theme-bg">
-      {!isExportRoute && <Navigation />}
+      <Navigation />
       <Outlet />
     </div>
   );
 }
 
 export default function App() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+
   return (
-    <ThemeProvider>
-      <CountryDataProvider>
-        <AppContent />
-      </CountryDataProvider>
-    </ThemeProvider>
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <ThemeProvider>
+        <AuthProvider>
+          <CountryDataProvider>
+            <AppContent />
+          </CountryDataProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </GoogleOAuthProvider>
   );
 }
 

@@ -2,6 +2,7 @@ import type { Route } from "./+types/home";
 import WorldMap from "../components/WorldMap";
 import { useTheme } from "../hooks/useTheme";
 import { useCountryData } from "../hooks/useCountryData";
+import { ProtectedRoute } from "../components/ProtectedRoute";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -10,7 +11,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Home() {
+function HomePage() {
   const { currentTheme } = useTheme();
   const { visitedCountries, wishlistCountries } = useCountryData();
 
@@ -44,5 +45,13 @@ export default function Home() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <ProtectedRoute>
+      <HomePage />
+    </ProtectedRoute>
   );
 }

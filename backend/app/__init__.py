@@ -14,13 +14,20 @@ def create_app(config_name=None):
     app.config.from_object('app.config.DevelopmentConfig')
 
   db.init_app(app)
-  cors.init_app(app, resources={
-    r"/api/*": {
-      "origins": ["http://localhost:5173"],
-      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      "allow_headers": ["Content-Type", "Authorization"]
-    }
-  })
+
+  if app.config.get('DEBUG'):
+    cors.init_app(app, resources={r"/*": {"origins": "*"}})
+  else:
+    cors_origins = app.config.get('CORS_ORIGINS', [])
+    cors.init_app(app, resources={
+      r"/api/*": {
+        "origins": cors_origins,
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+        "allow_headers": ["Content-Type", "Authorization"]
+      }
+    })
+
+  from app.models import User, Country, Visit, Statistics
 
   with app.app_context():
     db.create_all()

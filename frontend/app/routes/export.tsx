@@ -7,6 +7,7 @@ import { useTheme } from "../hooks/useTheme";
 import { useCountryData } from "../hooks/useCountryData";
 import { getCountryFlag, getCountryContinent, TOTAL_COUNTRIES } from "../config/countries";
 import { Globe, Bookmark, MapPin, Trophy, Info } from 'lucide-react';
+import { ProtectedRoute } from "../components/ProtectedRoute";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -69,7 +70,7 @@ function StatCard({ icon: Icon, title, value, color, theme, tooltip }: StatCardP
   );
 }
 
-export default function Export() {
+function ExportPage() {
   const { currentTheme } = useTheme();
   const { visitedCountries, wishlistCountries } = useCountryData();
   const [dialogOpen, setDialogOpen] = useState<'visited' | 'wishlist' | null>(null);
@@ -378,5 +379,13 @@ export default function Export() {
         color={currentTheme.colors.warning}
       />
     </div>
+  );
+}
+
+export default function Export() {
+  return (
+    <ProtectedRoute>
+      <ExportPage />
+    </ProtectedRoute>
   );
 }

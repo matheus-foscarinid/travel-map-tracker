@@ -1,7 +1,10 @@
 import type { Route } from "./+types/config";
-import { useState } from 'react';
-import { User, Mail, Palette, LogOut, Save } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User as UserIcon, Mail, Palette, LogOut, Save } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import { useAuth, type User } from '../hooks/useAuth';
+import { api } from '../utils/api';
+import { ProtectedRoute } from '../components/ProtectedRoute';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -10,19 +13,41 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Config() {
+function ConfigPage() {
   const { currentTheme, setTheme, availableThemes } = useTheme();
-  const [userName, setUserName] = useState('John Doe');
-  const [userEmail, setUserEmail] = useState('john.doe@example.com');
+  const { user, updateUser, logout } = useAuth();
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const handleSaveSettings = () => {
-    console.log('Saving settings:', { userName, userEmail, currentTheme: currentTheme.id });
-    alert('Settings saved successfully!');
+  useEffect(() => {
+    if (user) {
+      setUserName(user.name || '');
+      setUserEmail(user.email || '');
+    }
+  }, [user]);
+
+  const handleSaveSettings = async () => {
+    if (!user) return;
+
+    setSaving(true);
+    try {
+      const updatedUser = await api.put<User>('/auth/users/me', {
+        name: userName,
+        email: userEmail,
+      });
+      updateUser(updatedUser);
+      alert('Settings saved successfully!');
+    } catch (error: any) {
+      console.error('Failed to save settings:', error);
+      alert(error.message || 'Failed to save settings. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSignOut = () => {
-    console.log('Signing out...');
-    alert('Signed out successfully!');
+    logout();
   };
 
   return (
@@ -36,13 +61,13 @@ export default function Config() {
         <div className="space-y-8">
           <div className="theme-surface rounded-lg shadow-md p-6 theme-border border">
             <div className="flex items-center mb-6">
-              <User className="w-6 h-6 theme-primary-text mr-3" />
+              <UserIcon className="w-6 h-6 theme-primary-text mr-3" />
               <h2 className="text-xl font-semibold theme-text-primary">User Profile</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium theme-text-secondary mb-2">
-                  <User className="w-4 h-4 inline mr-2" />
+                  <UserIcon className="w-4 h-4 inline mr-2" />
                   Display Name
                 </label>
                 <input
@@ -120,13 +145,22 @@ export default function Config() {
 
           <button
             onClick={handleSaveSettings}
-            className="flex items-center px-6 py-2 theme-primary text-white rounded-md hover:bg-indigo-700 transition-colors"
+            disabled={saving}
+            className="flex items-center px-6 py-2 theme-primary text-white rounded-md hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="w-4 h-4 mr-2" />
-            Save Settings
+            {saving ? 'Saving...' : 'Save Settings'}
           </button>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Config() {
+  return (
+    <ProtectedRoute>
+      <ConfigPage />
+    </ProtectedRoute>
   );
 }

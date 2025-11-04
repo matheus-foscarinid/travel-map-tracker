@@ -1,0 +1,115 @@
+import type { Route } from "./+types/login";
+import { GoogleLogin } from '@react-oauth/google';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router';
+import { api } from '../utils/api';
+import { useTheme } from '../hooks/useTheme';
+import { Globe } from 'lucide-react';
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Login - Travel Map Tracker" },
+    { name: "description", content: "Login to your Travel Map Tracker account" },
+  ];
+}
+
+export default function Login() {
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { currentTheme } = useTheme();
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    navigate('/');
+    return null;
+  }
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      const idToken = credentialResponse.credential;
+
+      // Verify token with backend
+      const response = await api.post<{ token: string; user: any }>('/auth/google/verify', {
+        id_token: idToken,
+      });
+
+      // Store token and user info
+      login(response.token, response.user);
+
+      // Redirect to home
+      navigate('/');
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      alert(error.message || 'Login failed. Please try again.');
+    }
+  };
+
+  const handleGoogleError = () => {
+    console.error('Google login failed');
+    alert('Google login failed. Please try again.');
+  };
+
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{
+        backgroundColor: currentTheme.colors.background,
+        color: currentTheme.colors.textPrimary
+      }}
+    >
+      <div
+        className="max-w-md w-full mx-4 p-8 rounded-lg shadow-lg border"
+        style={{
+          backgroundColor: currentTheme.colors.surface,
+          borderColor: currentTheme.colors.border
+        }}
+      >
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <Globe
+              className="w-16 h-16"
+              style={{ color: currentTheme.colors.primary }}
+            />
+          </div>
+          <h1
+            className="text-3xl font-bold mb-2"
+            style={{ color: currentTheme.colors.textPrimary }}
+          >
+            Travel Map Tracker
+          </h1>
+          <p
+            className="text-sm"
+            style={{ color: currentTheme.colors.textSecondary }}
+          >
+            Sign in to track your travels
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          {googleClientId ? (
+            <div className="flex justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                useOneTap
+              />
+            </div>
+          ) : (
+            <div
+              className="p-4 rounded border text-center"
+              style={{
+                backgroundColor: currentTheme.colors.surfaceSecondary,
+                borderColor: currentTheme.colors.border,
+                color: currentTheme.colors.textSecondary
+              }}
+            >
+              <p>Google Client ID not configured. Please set VITE_GOOGLE_CLIENT_ID in your environment.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
