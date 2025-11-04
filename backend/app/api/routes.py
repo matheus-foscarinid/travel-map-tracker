@@ -1,32 +1,12 @@
 from flask import Blueprint, request, jsonify, current_app
-from datetime import datetime, timedelta, timezone
-import jwt
+from datetime import datetime, timezone
 import requests
 from app.models import User
 from app.extensions import db
 from app.utils.validators import validate_email, validate_username
+from app.utils.auth import generate_token, verify_token, get_user_from_request
 
 auth_bp = Blueprint('auth', __name__)
-
-def generate_token(user_id):
-  payload = {
-    'user_id': user_id,
-    'exp': datetime.now(timezone.utc) + timedelta(days=7),
-    'iat': datetime.now(timezone.utc)
-  }
-  token = jwt.encode(payload, current_app.config['JWT_SECRET_KEY'], algorithm='HS256')
-  if isinstance(token, bytes):
-    return token.decode('utf-8')
-  return token
-
-def verify_token(token):
-  try:
-    payload = jwt.decode(token, current_app.config['JWT_SECRET_KEY'], algorithms=['HS256'])
-    return payload.get('user_id')
-  except jwt.ExpiredSignatureError:
-    return None
-  except jwt.InvalidTokenError:
-    return None
 
 def verify_google_token(id_token):
   try:
@@ -116,25 +96,9 @@ def google_verify():
 @auth_bp.route('/me', methods=['GET'])
 def get_current_user():
   try:
-    auth_header = request.headers.get('Authorization')
-
-    if not auth_header:
-      return jsonify({'error': 'Authorization header is required'}), 401
-
-    try:
-      token = auth_header.split(' ')[1]
-    except IndexError:
-      return jsonify({'error': 'Invalid authorization header format'}), 401
-
-    user_id = verify_token(token)
-
-    if not user_id:
-      return jsonify({'error': 'Invalid or expired token'}), 401
-
-    user = User.query.get(user_id)
-
-    if not user:
-      return jsonify({'error': 'User not found'}), 404
+    user, error_response, status_code = get_user_from_request()
+    if error_response:
+      return error_response, status_code
 
     return jsonify(user.to_dict()), 200
 
@@ -201,25 +165,9 @@ def get_user(user_id):
 @auth_bp.route('/users/me', methods=['PUT'])
 def update_current_user():
   try:
-    auth_header = request.headers.get('Authorization')
-
-    if not auth_header:
-      return jsonify({'error': 'Authorization header is required'}), 401
-
-    try:
-      token = auth_header.split(' ')[1]
-    except IndexError:
-      return jsonify({'error': 'Invalid authorization header format'}), 401
-
-    user_id = verify_token(token)
-
-    if not user_id:
-      return jsonify({'error': 'Invalid or expired token'}), 401
-
-    user = User.query.get(user_id)
-
-    if not user:
-      return jsonify({'error': 'User not found'}), 404
+    user, error_response, status_code = get_user_from_request()
+    if error_response:
+      return error_response, status_code
 
     data = request.get_json()
 

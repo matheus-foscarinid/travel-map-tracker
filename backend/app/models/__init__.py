@@ -2,7 +2,6 @@ from app.extensions import db
 
 from .user import User
 from .country import Country
-from .visit import Visit
-from .statistics import Statistics
+from .marked_country import MarkedCountry
 
-__all__ = ['User', 'Country', 'Visit', 'Statistics']
+__all__ = ['User', 'Country', 'MarkedCountry']

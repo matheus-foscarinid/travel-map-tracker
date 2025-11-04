@@ -27,10 +27,16 @@ def create_app(config_name=None):
       }
     })
 
-  from app.models import User, Country, Visit, Statistics
+  from app.models import User, Country, MarkedCountry
 
   with app.app_context():
     db.create_all()
+    from app.services.country_service import import_countries
+    try:
+      import_countries()
+    except Exception:
+      # Não precisa falhar o app inteiro só para importar os países :)
+      pass
 
   from app.api import api_bp
   app.register_blueprint(api_bp, url_prefix='/api')
