@@ -50,10 +50,10 @@ cp env.example .env
 # Edite o arquivo .env com os valores necessários (veja seção de Variáveis de Ambiente abaixo)
 
 # Execute o servidor Flask
-flask run
+flask run --port 5001
 ```
 
-O backend estará disponível em `http://localhost:5000`
+O backend estará disponível em `http://localhost:5001`
 
 ### 2. Configuração do Frontend
 
@@ -125,5 +125,5 @@ travel-map-tracker/
 
 ### Modo de Desenvolvimento
 
-1. **Backend**: Execute `flask run` no diretório `backend/`
+1. **Backend**: Execute `flask run --port 5001` no diretório `backend/`
 2. **Frontend**: Execute `npm run dev` no diretório `frontend/`
