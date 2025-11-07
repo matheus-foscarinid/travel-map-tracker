@@ -13,7 +13,7 @@ interface CountryModalProps {
 
 export default function CountryModal({ isOpen, onClose, countryName, countryCode }: CountryModalProps) {
   const { currentTheme } = useTheme();
-  const { visitedCountries, wishlistCountries, updateCountries } = useCountryData();
+  const { visitedCountries, wishlistCountries, updateCountry } = useCountryData();
 
   const getCountryStatus = () => {
     if (visitedCountries.includes(countryName)) return 'visited';
@@ -21,26 +21,26 @@ export default function CountryModal({ isOpen, onClose, countryName, countryCode
     return 'none';
   };
 
-  const toggleVisited = () => {
-    const newVisited = visitedCountries.includes(countryName)
-      ? visitedCountries.filter(name => name !== countryName)
-      : [...visitedCountries, countryName];
+  const toggleVisited = async () => {
+    const currentStatus = getCountryStatus();
+    const newStatus = currentStatus === 'visited' ? null : 'visited';
 
-    // Remove from wishlist if adding to visited
-    const newWishlist = wishlistCountries.filter(name => name !== countryName);
-
-    updateCountries(newVisited, newWishlist);
+    try {
+      await updateCountry(countryName, newStatus);
+    } catch (error) {
+      console.error('Error updating country status:', error);
+    }
   };
 
-  const toggleWishlist = () => {
-    const newWishlist = wishlistCountries.includes(countryName)
-      ? wishlistCountries.filter(name => name !== countryName)
-      : [...wishlistCountries, countryName];
+  const toggleWishlist = async () => {
+    const currentStatus = getCountryStatus();
+    const newStatus = currentStatus === 'wishlist' ? null : 'wishlist';
 
-    // Remove from visited if adding to wishlist
-    const newVisited = visitedCountries.filter(name => name !== countryName);
-
-    updateCountries(newVisited, newWishlist);
+    try {
+      await updateCountry(countryName, newStatus);
+    } catch (error) {
+      console.error('Error updating country status:', error);
+    }
   };
 
   useEffect(() => {

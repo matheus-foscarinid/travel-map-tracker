@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { X, Search, Globe, Bookmark } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import { useToast } from '../hooks/useToast';
 import { COUNTRIES, type Country } from '../config/countries';
 
 interface CountryManagementModalProps {
@@ -8,7 +9,7 @@ interface CountryManagementModalProps {
   onClose: () => void;
   visitedCountries: string[];
   wishlistCountries: string[];
-  onUpdateCountries: (visited: string[], wishlist: string[]) => void;
+  onUpdateCountry: (countryName: string, status: 'visited' | 'wishlist' | null) => Promise<void>;
 }
 
 export default function CountryManagementModal({
@@ -16,12 +17,11 @@ export default function CountryManagementModal({
   onClose,
   visitedCountries,
   wishlistCountries,
-  onUpdateCountries
+  onUpdateCountry
 }: CountryManagementModalProps) {
   const { currentTheme } = useTheme();
+  const { showError } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
-  const [localVisited, setLocalVisited] = useState<string[]>(visitedCountries);
-  const [localWishlist, setLocalWishlist] = useState<string[]>(wishlistCountries);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -41,54 +41,38 @@ export default function CountryManagementModal({
     };
   }, [isOpen, onClose]);
 
-  useEffect(() => {
-    setLocalVisited(visitedCountries);
-    setLocalWishlist(wishlistCountries);
-  }, [visitedCountries, wishlistCountries]);
-
   const filteredCountries = COUNTRIES.filter(country =>
     country.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getCountryStatus = (countryName: string) => {
-    if (localVisited.includes(countryName)) return 'visited';
-    if (localWishlist.includes(countryName)) return 'wishlist';
+    if (visitedCountries.includes(countryName)) return 'visited';
+    if (wishlistCountries.includes(countryName)) return 'wishlist';
     return 'none';
   };
 
-  const toggleVisited = (countryName: string) => {
-    const newVisited = localVisited.includes(countryName)
-      ? localVisited.filter(name => name !== countryName)
-      : [...localVisited, countryName];
+  const toggleVisited = async (countryName: string) => {
+    const currentStatus = getCountryStatus(countryName);
+    const newStatus = currentStatus === 'visited' ? null : 'visited';
 
-    // Remove from wishlist if adding to visited
-    const newWishlist = localWishlist.filter(name => name !== countryName);
-
-    setLocalVisited(newVisited);
-    setLocalWishlist(newWishlist);
+    try {
+      await onUpdateCountry(countryName, newStatus);
+    } catch (error) {
+      console.error('Error updating country:', error);
+      showError('Failed to update country status');
+    }
   };
 
-  const toggleWishlist = (countryName: string) => {
-    const newWishlist = localWishlist.includes(countryName)
-      ? localWishlist.filter(name => name !== countryName)
-      : [...localWishlist, countryName];
+  const toggleWishlist = async (countryName: string) => {
+    const currentStatus = getCountryStatus(countryName);
+    const newStatus = currentStatus === 'wishlist' ? null : 'wishlist';
 
-    // Remove from visited if adding to wishlist
-    const newVisited = localVisited.filter(name => name !== countryName);
-
-    setLocalVisited(newVisited);
-    setLocalWishlist(newWishlist);
-  };
-
-  const handleSave = () => {
-    onUpdateCountries(localVisited, localWishlist);
-    onClose();
-  };
-
-  const handleCancel = () => {
-    setLocalVisited(visitedCountries);
-    setLocalWishlist(wishlistCountries);
-    onClose();
+    try {
+      await onUpdateCountry(countryName, newStatus);
+    } catch (error) {
+      console.error('Error updating country:', error);
+      showError('Failed to update country status');
+    }
   };
 
   if (!isOpen) return null;
@@ -97,7 +81,7 @@ export default function CountryManagementModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={handleCancel}
+        onClick={onClose}
       />
 
       <div className="relative theme-surface rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[80vh] flex flex-col theme-border border">
@@ -106,7 +90,7 @@ export default function CountryManagementModal({
             Manage Countries
           </h2>
           <button
-            onClick={handleCancel}
+            onClick={onClose}
             className="theme-text-muted hover:theme-text-secondary transition-colors"
           >
             <X className="w-6 h-6" />
@@ -190,21 +174,6 @@ export default function CountryManagementModal({
               );
             })}
           </div>
-        </div>
-
-        <div className="flex justify-end space-x-3 p-6 theme-border border-t theme-surface-secondary rounded-b-lg">
-          <button
-            onClick={handleCancel}
-            className="px-4 py-2 theme-text-secondary theme-surface theme-border border rounded-md hover:theme-surface-secondary transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 theme-primary text-white rounded-md hover:bg-indigo-700 transition-colors"
-          >
-            Save Changes
-          </button>
         </div>
       </div>
     </div>

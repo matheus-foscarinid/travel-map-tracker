@@ -282,7 +282,7 @@ function MapContent({ onCountryClick, onCountrySelect, getCountryStatus, visited
 
 export default function WorldMap({ onCountryClick, showLabels = true, showControls = true }: WorldMapProps) {
   const { currentTheme } = useTheme();
-  const { visitedCountries, wishlistCountries, updateCountries, getCountryStatus } = useCountryData();
+  const { visitedCountries, wishlistCountries, updateCountry, getCountryStatus } = useCountryData();
   const [selectedCountry, setSelectedCountry] = useState<SelectedCountry | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isManagementModalOpen, setIsManagementModalOpen] = useState(false);
@@ -308,8 +308,12 @@ export default function WorldMap({ onCountryClick, showLabels = true, showContro
     setIsManagementModalOpen(false);
   };
 
-  const handleUpdateCountries = (visited: string[], wishlist: string[]) => {
-    updateCountries(visited, wishlist);
+  const handleUpdateCountry = async (countryName: string, status: 'visited' | 'wishlist' | null) => {
+    try {
+      await updateCountry(countryName, status);
+    } catch (error) {
+      console.error('Error updating country:', error);
+    }
   };
 
   return (
@@ -360,7 +364,7 @@ export default function WorldMap({ onCountryClick, showLabels = true, showContro
         onClose={handleCloseManagementModal}
         visitedCountries={visitedCountries}
         wishlistCountries={wishlistCountries}
-        onUpdateCountries={handleUpdateCountries}
+        onUpdateCountry={handleUpdateCountry}
       />
     </div>
   );
