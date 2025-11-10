@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { Globe, Bookmark } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 
 interface Country {
@@ -70,7 +69,7 @@ export default function CountriesListDialog({
             className="text-lg font-semibold flex items-center gap-2"
             style={{ color: currentTheme.colors.textPrimary }}
           >
-            <Icon className="w-5 h-5" style={{ color: color }} />
+            <Icon className="w-5 h-5" />
             {title} ({countries.length})
           </h2>
           <button
