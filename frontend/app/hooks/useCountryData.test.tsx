@@ -89,11 +89,13 @@ describe('useCountryData', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
-    }, { timeout: 3000 });
-
-    vi.mocked(api.post).mockResolvedValue({});
+    });
 
     await act(async () => {
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
       await result.current.updateCountry('United States', 'visited');
     });
 
