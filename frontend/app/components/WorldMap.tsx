@@ -308,9 +308,9 @@ export default function WorldMap({ onCountryClick, showLabels = true, showContro
     setIsManagementModalOpen(false);
   };
 
-  const handleUpdateCountry = async (countryName: string, status: 'visited' | 'wishlist' | null) => {
+  const handleUpdateCountry = async (countryName: string, status: 'visited' | 'wishlist' | null, visitStartDate?: string, visitEndDate?: string) => {
     try {
-      await updateCountry(countryName, status);
+      await updateCountry(countryName, status, visitStartDate, visitEndDate);
     } catch (error) {
       console.error('Error updating country:', error);
     }

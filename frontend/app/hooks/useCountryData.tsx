@@ -8,8 +8,9 @@ interface CountryDataContextType {
   wishlistCountries: string[];
   loading: boolean;
   error: string | null;
-  updateCountry: (countryName: string, status: 'visited' | 'wishlist' | null) => Promise<void>;
+  updateCountry: (countryName: string, status: 'visited' | 'wishlist' | null, visitStartDate?: string, visitEndDate?: string) => Promise<void>;
   getCountryStatus: (countryName: string) => 'visited' | 'wishlist' | 'default';
+  getCountryDates: (countryName: string) => { startDate: string | null; endDate: string | null };
 }
 
 interface Country {
@@ -27,6 +28,8 @@ interface MarkedCountry {
   country_name: string;
   country_code: string | null;
   status: 'visited' | 'wishlist';
+  visit_start_date: string | null;
+  visit_end_date: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -36,6 +39,7 @@ const CountryDataContext = createContext<CountryDataContextType | undefined>(und
 export function CountryDataProvider({ children }: { children: ReactNode }) {
   const [visitedCountries, setVisitedCountries] = useState<string[]>([]);
   const [wishlistCountries, setWishlistCountries] = useState<string[]>([]);
+  const [countryDates, setCountryDates] = useState<Map<string, { startDate: string | null; endDate: string | null }>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [countryNameToIdMap, setCountryNameToIdMap] = useState<Map<string, number>>(new Map());
@@ -79,6 +83,7 @@ export function CountryDataProvider({ children }: { children: ReactNode }) {
 
         const visited: string[] = [];
         const wishlist: string[] = [];
+        const dates = new Map<string, { startDate: string | null; endDate: string | null }>();
 
         markedCountries.forEach((mc) => {
           if (mc.country_name) {
@@ -87,11 +92,16 @@ export function CountryDataProvider({ children }: { children: ReactNode }) {
             } else if (mc.status === 'wishlist') {
               wishlist.push(mc.country_name);
             }
+            dates.set(mc.country_name, {
+              startDate: mc.visit_start_date,
+              endDate: mc.visit_end_date
+            });
           }
         });
 
         setVisitedCountries(visited);
         setWishlistCountries(wishlist);
+        setCountryDates(dates);
       } catch (error) {
         console.error('Error fetching marked countries:', error);
         setError('Failed to load marked countries');
@@ -111,6 +121,7 @@ export function CountryDataProvider({ children }: { children: ReactNode }) {
 
       const visited: string[] = [];
       const wishlist: string[] = [];
+      const dates = new Map<string, { startDate: string | null; endDate: string | null }>();
 
       markedCountries.forEach((mc) => {
         if (mc.country_name) {
@@ -119,18 +130,23 @@ export function CountryDataProvider({ children }: { children: ReactNode }) {
           } else if (mc.status === 'wishlist') {
             wishlist.push(mc.country_name);
           }
+          dates.set(mc.country_name, {
+            startDate: mc.visit_start_date,
+            endDate: mc.visit_end_date
+          });
         }
       });
 
       setVisitedCountries(visited);
       setWishlistCountries(wishlist);
+      setCountryDates(dates);
     } catch (error) {
       console.error('Error refreshing marked countries:', error);
       setError('Failed to refresh marked countries');
     }
   };
 
-  const updateCountry = async (countryName: string, status: 'visited' | 'wishlist' | null) => {
+  const updateCountry = async (countryName: string, status: 'visited' | 'wishlist' | null, visitStartDate?: string, visitEndDate?: string) => {
     if (!isAuthenticated) {
       setError('User not authenticated');
       return;
@@ -159,11 +175,19 @@ export function CountryDataProvider({ children }: { children: ReactNode }) {
           });
         }
       } else {
-        // Mark the country with the specified status (API handles switching between visited/wishlist)
-        await api.post('/marked-countries/mark', {
+        const payload: any = {
           country_id: countryId,
           status: status
-        });
+        };
+
+        if (visitStartDate) {
+          payload.visit_start_date = visitStartDate;
+        }
+        if (visitEndDate) {
+          payload.visit_end_date = visitEndDate;
+        }
+
+        await api.post('/marked-countries/mark', payload);
       }
 
       // Refresh the marked countries list
@@ -181,6 +205,10 @@ export function CountryDataProvider({ children }: { children: ReactNode }) {
     return 'default';
   };
 
+  const getCountryDates = (countryName: string) => {
+    return countryDates.get(countryName) || { startDate: null, endDate: null };
+  };
+
   return (
     <CountryDataContext.Provider
       value={{
@@ -190,6 +218,7 @@ export function CountryDataProvider({ children }: { children: ReactNode }) {
         error,
         updateCountry,
         getCountryStatus,
+        getCountryDates,
       }}
     >
       {children}

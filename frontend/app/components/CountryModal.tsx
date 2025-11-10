@@ -1,8 +1,11 @@
-import { useEffect } from 'react';
-import { Globe, Bookmark } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Globe, Bookmark, Calendar } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import { useCountryData } from '../hooks/useCountryData';
+import { useToast } from '../hooks/useToast';
 import { getCountryFlag } from '../config/countries';
+import DatePickerModal from './DatePickerModal';
+import { formatDate } from '../utils/dateFormatter';
 
 interface CountryModalProps {
   isOpen: boolean;
@@ -13,12 +16,33 @@ interface CountryModalProps {
 
 export default function CountryModal({ isOpen, onClose, countryName, countryCode }: CountryModalProps) {
   const { currentTheme } = useTheme();
-  const { visitedCountries, wishlistCountries, updateCountry } = useCountryData();
+  const { visitedCountries, wishlistCountries, updateCountry, getCountryDates } = useCountryData();
+  const { showError } = useToast();
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const getCountryStatus = () => {
     if (visitedCountries.includes(countryName)) return 'visited';
     if (wishlistCountries.includes(countryName)) return 'wishlist';
     return 'none';
+  };
+
+  const openDatePicker = () => {
+    setShowDatePicker(true);
+  };
+
+  const closeDatePicker = () => {
+    setShowDatePicker(false);
+  };
+
+  const handleSaveDates = async (startDate: string, endDate: string) => {
+    try {
+      await updateCountry(countryName, 'visited', startDate || undefined, endDate || undefined);
+      closeDatePicker();
+    } catch (error) {
+      console.error('Error updating country dates:', error);
+      showError('Failed to update travel dates');
+      throw error;
+    }
   };
 
   const toggleVisited = async () => {
@@ -27,6 +51,10 @@ export default function CountryModal({ isOpen, onClose, countryName, countryCode
 
     try {
       await updateCountry(countryName, newStatus);
+      if (newStatus === 'visited') {
+        // Open date picker when marking as visited
+        setTimeout(() => openDatePicker(), 100);
+      }
     } catch (error) {
       console.error('Error updating country status:', error);
     }
@@ -140,6 +168,38 @@ export default function CountryModal({ isOpen, onClose, countryName, countryCode
                 </button>
               </div>
             </div>
+
+            {getCountryStatus() === 'visited' && (() => {
+              const dates = getCountryDates(countryName);
+              return (
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium theme-text-secondary">
+                      Travel Dates
+                    </label>
+                    <button
+                      onClick={openDatePicker}
+                      className="p-1 rounded hover:theme-surface-secondary theme-text-muted transition-colors"
+                      title="Edit travel dates"
+                    >
+                      <Calendar className="w-4 h-4" />
+                    </button>
+                  </div>
+                  {dates.startDate || dates.endDate ? (
+                    <div className="flex items-center text-sm theme-text-primary theme-surface-secondary px-3 py-2 rounded-md">
+                      <Calendar className="w-4 h-4 mr-2 theme-text-muted" />
+                      <span>
+                        {dates.startDate && formatDate(dates.startDate)}
+                        {dates.startDate && dates.endDate && ' - '}
+                        {dates.endDate && formatDate(dates.endDate)}
+                      </span>
+                    </div>
+                  ) : (
+                    <p className="text-sm theme-text-muted italic">No dates recorded</p>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         </div>
 
@@ -152,6 +212,15 @@ export default function CountryModal({ isOpen, onClose, countryName, countryCode
           </button>
         </div>
       </div>
+
+      <DatePickerModal
+        isOpen={showDatePicker}
+        onClose={closeDatePicker}
+        countryName={countryName}
+        initialStartDate={getCountryDates(countryName).startDate || ''}
+        initialEndDate={getCountryDates(countryName).endDate || ''}
+        onSave={handleSaveDates}
+      />
     </div>
   );
 }
