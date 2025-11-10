@@ -8,6 +8,8 @@ class MarkedCountry(db.Model):
   user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
   country_id = db.Column(db.Integer, db.ForeignKey('countries.id'), nullable=False, index=True)
   status = db.Column(db.String(20), nullable=False)
+  visit_start_date = db.Column(db.Date, nullable=True)
+  visit_end_date = db.Column(db.Date, nullable=True)
   created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
   updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
@@ -30,6 +32,8 @@ class MarkedCountry(db.Model):
       'country_name': self.country.name if self.country else None,
       'country_code': self.country.code if self.country else None,
       'status': self.status,
+      'visit_start_date': self.visit_start_date.isoformat() if self.visit_start_date else None,
+      'visit_end_date': self.visit_end_date.isoformat() if self.visit_end_date else None,
       'created_at': self.created_at.isoformat(),
       'updated_at': self.updated_at.isoformat()
     }

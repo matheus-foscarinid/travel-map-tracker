@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.models import MarkedCountry, Country
 from app.extensions import db
 from app.utils.auth import get_user_from_request
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 
 marked_countries_bp = Blueprint('marked_countries', __name__)
 
@@ -16,6 +16,8 @@ def mark_country():
     data = request.get_json()
     country_id = data.get('country_id')
     status = data.get('status')
+    visit_start_date = data.get('visit_start_date')
+    visit_end_date = data.get('visit_end_date')
 
     if not country_id:
       return jsonify({'error': 'country_id is required'}), 400
@@ -27,13 +29,31 @@ def mark_country():
     if not country:
       return jsonify({'error': 'Country not found'}), 404
 
+    # Parse dates if provided
+    start_date = None
+    end_date = None
+    if visit_start_date:
+      try:
+        start_date = datetime.fromisoformat(visit_start_date.replace('Z', '+00:00')).date()
+      except (ValueError, AttributeError):
+        return jsonify({'error': 'Invalid visit_start_date format. Use ISO format (YYYY-MM-DD)'}), 400
+
+    if visit_end_date:
+      try:
+        end_date = datetime.fromisoformat(visit_end_date.replace('Z', '+00:00')).date()
+      except (ValueError, AttributeError):
+        return jsonify({'error': 'Invalid visit_end_date format. Use ISO format (YYYY-MM-DD)'}), 400
+
+    # Validate date range
+    if start_date and end_date and start_date > end_date:
+      return jsonify({'error': 'visit_start_date cannot be after visit_end_date'}), 400
+
     existing_mark = MarkedCountry.get_by_user_and_country(user.id, country_id)
 
     if existing_mark:
-      if existing_mark.status == status:
-        return jsonify({'message': 'Country already marked with this status', 'marked_country': existing_mark.to_dict()}), 200
-
       existing_mark.status = status
+      existing_mark.visit_start_date = start_date
+      existing_mark.visit_end_date = end_date
       existing_mark.updated_at = datetime.now(timezone.utc)
       db.session.commit()
       return jsonify({'message': 'Country status updated', 'marked_country': existing_mark.to_dict()}), 200
@@ -41,7 +61,9 @@ def mark_country():
     marked_country = MarkedCountry(
       user_id=user.id,
       country_id=country_id,
-      status=status
+      status=status,
+      visit_start_date=start_date,
+      visit_end_date=end_date
     )
     db.session.add(marked_country)
     db.session.commit()
