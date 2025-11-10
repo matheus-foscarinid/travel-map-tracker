@@ -89,13 +89,7 @@ export default function CountryManagementModal({
     const newStatus = currentStatus === 'visited' ? null : 'visited';
 
     try {
-      if (newStatus === 'visited') {
-        // When marking as visited, open the date picker
-        await onUpdateCountry(countryName, newStatus);
-        openDatePicker(countryName);
-      } else {
-        await onUpdateCountry(countryName, newStatus);
-      }
+      await onUpdateCountry(countryName, newStatus);
     } catch (error) {
       console.error('Error updating country:', error);
       showError('Failed to update country status');

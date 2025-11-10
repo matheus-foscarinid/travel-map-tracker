@@ -51,10 +51,6 @@ export default function CountryModal({ isOpen, onClose, countryName, countryCode
 
     try {
       await updateCountry(countryName, newStatus);
-      if (newStatus === 'visited') {
-        // Open date picker when marking as visited
-        setTimeout(() => openDatePicker(), 100);
-      }
     } catch (error) {
       console.error('Error updating country status:', error);
     }
