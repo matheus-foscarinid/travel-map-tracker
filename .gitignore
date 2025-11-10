@@ -4,6 +4,7 @@
 __pycache__/
 instance/
 venv/
+.coverage
 
 #Frontend
 .DS_Store
