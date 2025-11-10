@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router';
 import { api } from '../utils/api';
 import { useTheme } from '../hooks/useTheme';
 import { useToast } from '../hooks/useToast';
-import { Globe } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -68,23 +67,18 @@ export default function Login() {
         }}
       >
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <Globe
-              className="w-16 h-16"
-              style={{ color: currentTheme.colors.primary }}
+          <div className="flex flex-col items-center mb-6">
+            <img
+              src={currentTheme.type === 'dark' ? '/logo-dark.png' : '/logo-light.png'}
+              alt="Travel Map Tracker Logo"
+              className="h-24 mb-4"
             />
           </div>
-          <h1
-            className="text-3xl font-bold mb-2"
-            style={{ color: currentTheme.colors.textPrimary }}
-          >
-            Travel Map Tracker
-          </h1>
           <p
             className="text-sm"
             style={{ color: currentTheme.colors.textSecondary }}
           >
-            Sign in to track your travels
+            Sign in to track your travels around the world
           </p>
         </div>
 
@@ -95,6 +89,7 @@ export default function Login() {
                 onSuccess={handleGoogleSuccess}
                 onError={handleGoogleError}
                 useOneTap
+                theme={currentTheme.type === 'dark' ? 'filled_black' : 'outline'}
               />
             </div>
           ) : (
