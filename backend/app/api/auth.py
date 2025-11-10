@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import requests
 from app.models import User
 from app.extensions import db
-from app.utils.validators import validate_email, validate_username
+from app.utils.validators import validate_email
 from app.utils.auth import generate_token, verify_token, get_user_from_request
 
 auth_bp = Blueprint('auth', __name__)
@@ -52,8 +52,7 @@ def get_or_create_user_from_google(google_info):
   user = User(
     email=email,
     name=name,
-    google_id=google_id,
-    username=None
+    google_id=google_id
   )
   db.session.add(user)
   db.session.commit()
@@ -111,7 +110,6 @@ def register():
   try:
     data = request.get_json()
     email = data.get('email')
-    username = data.get('username')
     name = data.get('name')
 
     if not email:
@@ -120,21 +118,12 @@ def register():
     if not validate_email(email):
       return jsonify({'error': 'Invalid email format'}), 400
 
-    if username and not validate_username(username):
-      return jsonify({'error': 'Invalid username format'}), 400
-
     existing_user = User.query.filter_by(email=email).first()
     if existing_user:
       return jsonify({'error': 'User with this email already exists'}), 400
 
-    if username:
-      existing_username = User.query.filter_by(username=username).first()
-      if existing_username:
-        return jsonify({'error': 'Username already taken'}), 400
-
     user = User(
       email=email,
-      username=username,
       name=name
     )
     db.session.add(user)
