@@ -20,7 +20,6 @@ export default function Login() {
   const { showError } = useToast();
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
-  // Redirect if already authenticated
   if (isAuthenticated) {
     navigate('/');
     return null;
@@ -30,15 +29,12 @@ export default function Login() {
     try {
       const idToken = credentialResponse.credential;
 
-      // Verify token with backend
       const response = await api.post<{ token: string; user: any }>('/auth/google/verify', {
         id_token: idToken,
       });
 
-      // Store token and user info
       login(response.token, response.user);
 
-      // Redirect to home
       navigate('/');
     } catch (error: any) {
       console.error('Login failed:', error);

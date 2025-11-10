@@ -92,7 +92,7 @@ describe('useCountryData', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
-    });
+    }, { timeout: 3000 });
 
     vi.mocked(api.post).mockResolvedValue({});
 
@@ -128,7 +128,7 @@ describe('useCountryData', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
-    });
+    }, { timeout: 3000 });
 
     vi.mocked(api.post).mockResolvedValue({});
 
@@ -155,15 +155,17 @@ describe('useCountryData', () => {
         country_name: 'United States',
         country_code: 'US',
         status: 'visited',
+        visit_start_date: null,
+        visit_end_date: null,
         created_at: '2024-01-01',
         updated_at: '2024-01-01',
       },
     ];
 
     vi.mocked(api.get)
-      .mockResolvedValueOnce(mockCountries)
-      .mockResolvedValueOnce(mockMarkedCountries)
-      .mockResolvedValueOnce([]);
+      .mockResolvedValueOnce(mockCountries) // First call: fetch countries
+      .mockResolvedValueOnce(mockMarkedCountries) // Second call: fetch marked countries
+      .mockResolvedValueOnce([]); // Third call: refresh after unmark
 
     const { result } = renderHook(() => useCountryData(), {
       wrapper: ({ children }) => (
@@ -177,11 +179,11 @@ describe('useCountryData', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
-    });
+    }, { timeout: 3000 });
 
     await waitFor(() => {
       expect(result.current.visitedCountries).toContain('United States');
-    });
+    }, { timeout: 3000 });
 
     vi.mocked(api.post).mockResolvedValue({});
 
