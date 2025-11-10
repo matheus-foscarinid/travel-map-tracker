@@ -75,10 +75,7 @@ describe('useCountryData', () => {
       { id: 1, name: 'United States', code: 'US', flag: '🇺🇸', continent: 'North America' },
     ];
 
-    vi.mocked(api.get)
-      .mockResolvedValueOnce(mockCountries)
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([]);
+    vi.mocked(api.get).mockResolvedValue(mockCountries)
 
     const { result } = renderHook(() => useCountryData(), {
       wrapper: ({ children }) => (
@@ -112,9 +109,7 @@ describe('useCountryData', () => {
     ];
 
     vi.mocked(api.get)
-      .mockResolvedValueOnce(mockCountries)
-      .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([]);
+      .mockResolvedValue(mockCountries)
 
     const { result } = renderHook(() => useCountryData(), {
       wrapper: ({ children }) => (
@@ -163,9 +158,9 @@ describe('useCountryData', () => {
     ];
 
     vi.mocked(api.get)
-      .mockResolvedValueOnce(mockCountries) // First call: fetch countries
-      .mockResolvedValueOnce(mockMarkedCountries) // Second call: fetch marked countries
-      .mockResolvedValueOnce([]); // Third call: refresh after unmark
+      .mockResolvedValueOnce(mockCountries) // countries
+      .mockResolvedValueOnce(mockMarkedCountries) // marked countries
+      .mockResolvedValueOnce([]); // refresh depois de desmarcar
 
     const { result } = renderHook(() => useCountryData(), {
       wrapper: ({ children }) => (
