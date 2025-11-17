@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from datetime import datetime, timezone
 import requests
-from app.models import User
+from app.models import User, MarkedCountry
 from app.extensions import db
 from app.utils.validators import validate_email
 from app.utils.auth import generate_token, verify_token, get_user_from_request
@@ -151,35 +151,46 @@ def get_user(user_id):
   user = User.query.get_or_404(user_id)
   return jsonify(user.to_dict()), 200
 
-@auth_bp.route('/users/me', methods=['PUT'])
-def update_current_user():
+@auth_bp.route('/users/me', methods=['PUT', 'DELETE'])
+def manage_current_user():
   try:
     user, error_response, status_code = get_user_from_request()
     if error_response:
       return error_response, status_code
 
-    data = request.get_json()
+    if request.method == 'DELETE':
+      MarkedCountry.query.filter_by(user_id=user.id).delete()
 
-    if 'name' in data:
-      user.name = data['name']
+      db.session.delete(user)
+      db.session.commit()
 
-    if 'email' in data:
-      new_email = data['email']
-      if not validate_email(new_email):
-        return jsonify({'error': 'Invalid email format'}), 400
+      return jsonify({'message': 'Account deleted successfully'}), 200
 
-      existing_user = User.query.filter_by(email=new_email).first()
-      if existing_user and existing_user.id != user.id:
-        return jsonify({'error': 'Email already taken'}), 400
+    elif request.method == 'PUT':
+      data = request.get_json()
 
-      user.email = new_email
+      if 'name' in data:
+        user.name = data['name']
 
-    user.updated_at = datetime.now(timezone.utc)
-    db.session.commit()
+      if 'email' in data:
+        new_email = data['email']
+        if not validate_email(new_email):
+          return jsonify({'error': 'Invalid email format'}), 400
 
-    return jsonify(user.to_dict()), 200
+        existing_user = User.query.filter_by(email=new_email).first()
+        if existing_user and existing_user.id != user.id:
+          return jsonify({'error': 'Email already taken'}), 400
+
+        user.email = new_email
+
+      user.updated_at = datetime.now(timezone.utc)
+      db.session.commit()
+
+      return jsonify(user.to_dict()), 200
 
   except Exception as e:
-    print(f"Error in update_current_user: {e}")
+    method_name = 'delete' if request.method == 'DELETE' else 'update'
+    print(f"Error in manage_current_user ({method_name}): {e}")
     db.session.rollback()
-    return jsonify({'error': 'Failed to update user'}), 500
+    error_message = 'Failed to delete account' if request.method == 'DELETE' else 'Failed to update user'
+    return jsonify({'error': error_message}), 500

@@ -1,11 +1,12 @@
 import type { Route } from "./+types/config";
 import { useState, useEffect } from 'react';
-import { User as UserIcon, Mail, Palette, LogOut, Save } from 'lucide-react';
+import { User as UserIcon, Mail, Palette, LogOut, Save, Trash2 } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import { useAuth, type User } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { api } from '../utils/api';
 import { ProtectedRoute } from '../components/ProtectedRoute';
+import ConfirmationDialog from '../components/ConfirmationDialog';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -21,6 +22,8 @@ function ConfigPage() {
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [saving, setSaving] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -50,6 +53,22 @@ function ConfigPage() {
 
   const handleSignOut = () => {
     logout();
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+
+    setDeleting(true);
+    try {
+      await api.delete('/auth/users/me');
+      showSuccess('Account deleted successfully');
+      logout();
+    } catch (error: any) {
+      console.error('Failed to delete account:', error);
+      showError(error.message || 'Failed to delete account. Please try again.');
+      setDeleting(false);
+      setShowDeleteDialog(false);
+    }
   };
 
   return (
@@ -136,24 +155,54 @@ function ConfigPage() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <button
-            onClick={handleSignOut}
-            className="flex items-center px-6 py-2 text-red-600 border border-red-300 rounded-md hover:bg-red-50 transition-colors"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
-          </button>
+        <div className="mt-8 space-y-6">
+          <div className="theme-surface rounded-lg shadow-md p-6 theme-border border border-red-200">
+            <div className="flex items-center mb-4">
+              <Trash2 className="w-6 h-6 text-red-600 mr-3" />
+              <h2 className="text-xl font-semibold theme-text-primary">Danger Zone</h2>
+            </div>
+            <p className="theme-text-secondary mb-4 text-sm">
+              Once you delete your account, there is no going back. This will permanently delete your account and all associated data.
+            </p>
+            <button
+              onClick={() => setShowDeleteDialog(true)}
+              className="flex items-center px-6 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete Account
+            </button>
+          </div>
 
-          <button
-            onClick={handleSaveSettings}
-            disabled={saving}
-            className="flex items-center px-6 py-2 theme-primary text-white rounded-md hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Save className="w-4 h-4 mr-2" />
-            {saving ? 'Saving...' : 'Save Settings'}
-          </button>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <button
+              onClick={handleSignOut}
+              className="flex items-center px-6 py-2 text-red-600 border border-red-300 rounded-md hover:bg-red-50 transition-colors"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </button>
+
+            <button
+              onClick={handleSaveSettings}
+              disabled={saving}
+              className="flex items-center px-6 py-2 theme-primary text-white rounded-md hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {saving ? 'Saving...' : 'Save Settings'}
+            </button>
+          </div>
         </div>
+
+        <ConfirmationDialog
+          isOpen={showDeleteDialog}
+          onClose={() => !deleting && setShowDeleteDialog(false)}
+          onConfirm={handleDeleteAccount}
+          title="Delete Account"
+          message="Are you sure you want to delete your account? This action cannot be undone. All your data, including marked countries and visit history, will be permanently deleted."
+          confirmText="Delete Account"
+          cancelText="Cancel"
+          isLoading={deleting}
+        />
       </div>
     </div>
   );
