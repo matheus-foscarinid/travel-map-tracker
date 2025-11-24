@@ -62,23 +62,6 @@ class TestGetCurrentUser:
         data = response.get_json()
         assert 'error' in data
 
-
-class TestGetUsers:
-    def test_get_users(self, client, sample_user):
-        response = client.get('/api/auth/users')
-        assert response.status_code == 200
-        data = response.get_json()
-        assert isinstance(data, list)
-        assert len(data) > 0
-
-    def test_get_user_by_id(self, client, sample_user):
-        response = client.get(f'/api/auth/users/{sample_user.id}')
-        assert response.status_code == 200
-        data = response.get_json()
-        assert data['id'] == sample_user.id
-        assert data['email'] == sample_user.email
-
-
 class TestUpdateCurrentUser:
     def test_update_user_name(self, client, auth_token):
         response = client.put('/api/auth/users/me',

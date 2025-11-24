@@ -105,52 +105,6 @@ def get_current_user():
     print(f"Error in get_current_user: {e}")
     return jsonify({'error': 'Failed to get user'}), 500
 
-@auth_bp.route('/register', methods=['POST'])
-def register():
-  try:
-    data = request.get_json()
-    email = data.get('email')
-    name = data.get('name')
-
-    if not email:
-      return jsonify({'error': 'Email is required'}), 400
-
-    if not validate_email(email):
-      return jsonify({'error': 'Invalid email format'}), 400
-
-    existing_user = User.query.filter_by(email=email).first()
-    if existing_user:
-      return jsonify({'error': 'User with this email already exists'}), 400
-
-    user = User(
-      email=email,
-      name=name
-    )
-    db.session.add(user)
-    db.session.commit()
-
-    token = generate_token(user.id)
-
-    return jsonify({
-      'token': token,
-      'user': user.to_dict()
-    }), 201
-
-  except Exception as e:
-    print(f"Error in register: {e}")
-    db.session.rollback()
-    return jsonify({'error': 'Registration failed'}), 500
-
-@auth_bp.route('/users', methods=['GET'])
-def get_users():
-  users = User.query.all()
-  return jsonify([user.to_dict() for user in users]), 200
-
-@auth_bp.route('/users/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-  user = User.query.get_or_404(user_id)
-  return jsonify(user.to_dict()), 200
-
 @auth_bp.route('/users/me', methods=['PUT', 'DELETE'])
 def manage_current_user():
   try:
