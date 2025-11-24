@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import html2canvas from 'html2canvas';
+import html2canvas, { type Options } from 'html2canvas';
 import { Download, Loader2 } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import { useToast } from '../hooks/useToast';
@@ -10,7 +10,7 @@ interface CaptureButtonProps {
   /** Nome do arquivo para download (sem extensão) */
   filename?: string;
   /** Opções customizadas para html2canvas */
-  canvasOptions?: html2canvas.Options;
+  canvasOptions?: Options;
   /** Classe CSS adicional para o botão */
   className?: string;
   /** Texto do botão */
@@ -52,25 +52,20 @@ export default function CaptureButton({
         element = document.body;
       }
 
-      // Configurações padrão para html2canvas
-      // Otimizadas para renderizar SVG do Leaflet corretamente
-      const defaultOptions: html2canvas.Options = {
+      const defaultOptions: Partial<Options> = {
         useCORS: true,
-        allowTaint: false, // Mudado para false para melhor compatibilidade
+        allowTaint: false,
         backgroundColor: currentTheme.colors.background || '#ffffff',
-        scale: 2, // Melhor qualidade para PNG
+        scale: 2,
         logging: false,
         width: element.scrollWidth,
         height: element.scrollHeight,
         windowWidth: element.scrollWidth,
         windowHeight: element.scrollHeight,
-        // Opções específicas para renderizar SVG/Canvas do Leaflet
         foreignObjectRendering: true,
         removeContainer: false,
         imageTimeout: 0,
-        // Ignorar elementos que podem causar problemas
-        ignoreElements: (element) => {
-          // Ignorar o próprio botão de captura para não aparecer na imagem
+        ignoreElements: (element: Element) => {
           if (buttonRef.current && element === buttonRef.current) {
             return true;
           }
@@ -79,10 +74,8 @@ export default function CaptureButton({
         ...canvasOptions
       };
 
-      // Capturar o elemento como canvas
       const canvas = await html2canvas(element, defaultOptions);
 
-      // Converter canvas para blob e fazer download
       canvas.toBlob((blob) => {
         if (!blob) {
           console.error('Erro ao criar blob da imagem');
@@ -91,18 +84,15 @@ export default function CaptureButton({
           return;
         }
 
-        // Criar link temporário para download
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.download = `${filename}.png`;
 
-        // Adicionar link ao DOM, clicar e remover
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
-        // Liberar URL do blob
         URL.revokeObjectURL(url);
 
         setIsCapturing(false);
