@@ -161,7 +161,6 @@ export function CountryDataProvider({ children }: { children: ReactNode }) {
       }
 
       if (status === null) {
-        // Unmark the country - get current status to pass to API
         const currentStatus = visitedCountries.includes(countryName)
           ? 'visited'
           : wishlistCountries.includes(countryName)

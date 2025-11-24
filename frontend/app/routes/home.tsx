@@ -15,15 +15,11 @@ function HomePage() {
   const { currentTheme } = useTheme();
   const { visitedCountries, wishlistCountries } = useCountryData();
 
-  const handleCountryClick = (country: any) => {
-    console.log('Country clicked:', country.properties.NAME || country.properties.ADMIN);
-  };
-
   return (
     <div className="w-full mx-auto h-screen flex flex-col">
       <div className="theme-surface shadow-lg overflow-hidden flex-1 flex flex-col relative">
         <div className="flex-1">
-          <WorldMap onCountryClick={handleCountryClick} />
+          <WorldMap />
         </div>
 
         <div className="absolute top-4 right-4 theme-surface rounded-lg shadow-lg p-4 z-10 theme-border border">

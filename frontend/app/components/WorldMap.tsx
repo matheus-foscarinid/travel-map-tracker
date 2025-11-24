@@ -345,7 +345,7 @@ export default function WorldMap({ onCountryClick, showLabels = true, showContro
       {showControls && (
         <button
           onClick={handleOpenManagementModal}
-          className="absolute bottom-16 right-8 theme-surface rounded-full p-3 shadow-lg hover:shadow-xl transition-all theme-border border z-10"
+          className="absolute bottom-24 right-8 theme-surface rounded-full p-3 shadow-lg hover:shadow-xl transition-all theme-border border z-10"
           style={{ color: currentTheme.colors.primary }}
         >
           <Plus className="w-6 h-6" />
