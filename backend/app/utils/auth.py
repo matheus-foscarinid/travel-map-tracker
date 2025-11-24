@@ -6,11 +6,11 @@ from app.models import User
 def verify_token(token):
   try:
     payload = jwt.decode(token, current_app.config['JWT_SECRET_KEY'], algorithms=['HS256'])
-    return payload.get('user_id')
+    return payload.get('user_id'), None
   except jwt.ExpiredSignatureError:
-    return None
+    return None, 'expired'
   except jwt.InvalidTokenError:
-    return None
+    return None, 'invalid'
 
 def generate_token(user_id):
   from datetime import datetime, timedelta, timezone
@@ -35,9 +35,11 @@ def get_user_from_request():
   except IndexError:
     return None, jsonify({'error': 'Invalid authorization header format'}), 401
 
-  user_id = verify_token(token)
+  user_id, token_error = verify_token(token)
   if not user_id:
-    return None, jsonify({'error': 'Invalid or expired token'}), 401
+    if token_error == 'expired':
+      return None, jsonify({'error': 'Token has expired'}), 401
+    return None, jsonify({'error': 'Invalid token'}), 401
 
   user = User.query.get(user_id)
   if not user:
