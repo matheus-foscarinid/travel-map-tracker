@@ -119,6 +119,11 @@ function ExportPage() {
           filename={`travel-statistics-${new Date().toISOString().split('T')[0]}`}
           label="Download PNG"
           showIcon={true}
+          canvasOptions={{
+            scrollX: 0,
+            scrollY: -30,
+            y: -30
+          }}
         />
       </div>
 
